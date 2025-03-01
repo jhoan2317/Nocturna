@@ -28,7 +28,7 @@ class UsersController extends Controller
                 return response()->json(['success'=>false]);
             }
         }
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        return response()->json(['message' => 'Credenciales invalidas'], 401);
     }
 
     public function logout(Request $request){
