@@ -44,7 +44,7 @@ class UsersController extends Controller
      */
     public function register(Request $request)
     {
-        $data = $request->only('name', 'birthday', 'email', 'password');
+        $data = $request->only('name', 'last_name', 'birthday', 'email', 'password');
         $user = User::where('email', $data['email'])->first();
         if($user){
             return response()->json(['exists' => true]);

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Register = () => {
     const [error, setError] = useState();
     const navigate = useNavigate();
-    const data = useRef({name: '', birthday: '',email:'', password:''});
+    const data = useRef({name: '', last_name: '', birthday: '',email:'', password:''});
 
     const handleInput = (input) => {
         data.current[input.name] = input.value;
@@ -13,8 +13,8 @@ const Register = () => {
     
     const handleRegister = async (event) => {
         event.preventDefault();
-        const {name, birthday, email, password} = data.current;
-        if(name && birthday && email && password) {
+        const {name, last_name, birthday, email, password} = data.current;
+        if(name && last_name && birthday && email && password) {
             try{
                 const res = await axios.post('http://localhost:8000/api/users/register', data.current)
                 if(res.data.exists){
@@ -42,6 +42,11 @@ const Register = () => {
                 <div className="my-3 px-3">
                     <label>Nombre</label>
                     <input onChange={(event)=>handleInput(event.target)} type="text" name="name" className="email form-control px-3 col-12 att" />
+                </div>
+
+                <div className="my-3 px-3">
+                    <label>Apellido</label>
+                    <input onChange={(event)=>handleInput(event.target)} type="text" name="last_name" className="email form-control px-3 col-12 att" />
                 </div>
 
                 <div className="my-3 px-3">
