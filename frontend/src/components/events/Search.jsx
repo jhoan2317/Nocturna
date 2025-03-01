@@ -19,7 +19,7 @@ const Search = ({displaySearch, setDisplaySearch}) => {
     return(
         <div className={displaySearch===false ? 'searchP' : 'searchP open'}>
             <span><i className="fa-solid fa-magnifying-glass"></i></span>
-            <input onChange={(event)=>handleText(event)} onKeyDown={(event)=>handleKeyDown(event)} type="text" className="search form-control" placeholder="Search ..." />
+            <input onChange={(event)=>handleText(event)} onKeyDown={(event)=>handleKeyDown(event)} type="text" className="search form-control" placeholder="Buscar" />
         </div>
     )
 }

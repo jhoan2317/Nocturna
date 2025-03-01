@@ -15,40 +15,9 @@ class Brandscontroller extends Controller
         return Brand::all();
     }
 
-    public function brandEvents(Request $request){
+    public function brandEvents(Request $request)
+    {
         return Brand::where('title', $request->title)->first()->events;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
@@ -56,14 +25,24 @@ class Brandscontroller extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-    }
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $brand = Brand::findOrFail($id);
+        $oldTitle = $brand->title;
+        $newTitle = $request->input('title');
+
+        // Rename the image file if it exists
+        $oldImagePath = public_path("bg/{$oldTitle}.jpg");
+        $newImagePath = public_path("bg/{$newTitle}.jpg");
+        if (file_exists($oldImagePath)) {
+            rename($oldImagePath, $newImagePath);
+        }
+
+        $brand->title = $newTitle;
+        $brand->save();
+
+        return response()->json(['success' => true, 'brand' => $brand], 200);
     }
 }

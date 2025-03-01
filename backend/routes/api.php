@@ -7,7 +7,9 @@ use App\Http\Controllers\EventsController;
 use App\Http\Controllers\Brandscontroller;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\SavedEventsController;
+use App\Http\Controllers\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,9 +29,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/events', [EventsController::class, 'index']);
 Route::post('/events', [EventsController::class, 'store']);
 Route::get('/brands', [Brandscontroller::class, 'index']);
+Route::put('/brands/{id}', [BrandsController::class, 'update']);
 Route::get('/brands/{title}', [Brandscontroller::class, 'brandEvents']);
 Route::get('/categories', [CategoriesController::class, 'index']);
 Route::get('/categories/{title}', [CategoriesController::class, 'categoryEvents']);
+Route::post('/categories', [CategoriesController::class, 'store']); 
+Route::put('/categories/{id}', [CategoriesController::class, 'update']); 
+Route::delete('/categories/{id}', [CategoriesController::class, 'destroy']); 
 Route::get('/events/search/{text}', [EventsController::class, 'search']);
 Route::get('/events/show/{id}', [EventsController::class, 'show']);
 Route::put('/events/{id}', [EventsController::class, 'update']);  
@@ -55,4 +61,10 @@ Route::delete('/events/destroy/{event}', [EventsController::class, 'destroy']);
 
 // Cuenta
 Route::put('/users/update/{user}/{name}', [UsersController::class, 'update']);
+
+// Estadísticas
+Route::get('/statistics', [StatisticsController::class, 'index']);
+
+// Suscripción
+Route::post('/subscribe', [SubscriptionController::class, 'store']);
 

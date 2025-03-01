@@ -16,16 +16,14 @@ class SavedEventsController extends Controller
         // return SavedEvents::all();
     }
 
-    public function savedEventUser(Request $request){
-        return User::find($request->id_user)->savedevents()->with('event.brand')->get();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function savedEventsUser($id_user)
     {
-        //
+        try {
+            $savedEvents = User::find($id_user)->savedevents()->with('event.brand')->get();
+            return response()->json($savedEvents);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
     }
 
     /**
@@ -41,38 +39,16 @@ class SavedEventsController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request)
+    public function destroy($event_id, $user_id)
     {
-        $savedEvent = SavedEvent::where(['event_id' => $request->event_id])->first();
-        $savedEvent->delete();
+        $savedEvent = SavedEvent::where(['event_id' => $event_id, 'user_id' => $user_id])->first();
+        if ($savedEvent) {
+            $savedEvent->delete();
+        }
 
-        $savedEvents = User::find($request->user_id)->savedevents()->with('event.brand')->get();
-        return response()->json(['success' => true , 'savedEvents' => $savedEvents]);
+        $savedEvents = User::find($user_id)->savedevents()->with('event.brand')->get();
+        return response()->json(['success' => true, 'savedEvents' => $savedEvents]);
     }
 }

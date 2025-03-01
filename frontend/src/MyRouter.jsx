@@ -1,10 +1,9 @@
 import React from "react";
-import {BrowserRouter as MainRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as MainRouter, Routes, Route } from 'react-router-dom';
 import Header from "./partials/Header";
 import Home from "./components/interface/home";
 import Footer from "./partials/Footer";
 import Brand from "./components/brands/Brand";
-import Gender from "./components/Genders/Gender";
 import Category from "./components/categories/Category";
 import Filter from "./components/events/Filter";
 import ShowEvent from "./components/events/ShowEvent";
@@ -15,9 +14,14 @@ import Register from "./components/users/Register";
 import Dashboard from "./components/admins/Dashboard";
 import DashboardUsers from "./components/admins/DashboardUsers";
 import DashboardEvents from "./components/admins/DashboardEvents";
+import DashboardBrands from "./components/admins/DashboardBrands";
+import DashboardCategories from "./components/admins/DashboardCategories"; // Importar el nuevo componente
 import SavedEvents from "./components/savedEvents/SavedEvents";
 import Account from "./components/users/Account";
 import AccountInfo from "./components/users/AccountInfo";
+import UpdateBrand from "./components/brands/UpdateBrand";
+import UpdateCategory from "./components/categories/UpdateCategory"; // Importar el nuevo componente
+import AddCategory from "./components/categories/AddCategory"; // Importar el nuevo componente
 
 const MyRouter = () => {
     return (
@@ -35,8 +39,13 @@ const MyRouter = () => {
                     <Route path="/admins/dashboard" element={<Dashboard />}/>
                     <Route path="/admins/dashboard/users" element={<DashboardUsers />}/>
                     <Route path="/admins/dashboard/events" element={<DashboardEvents />}/>
+                    <Route path="/admins/dashboard/brands" element={<DashboardBrands />}/>
+                    <Route path="/admins/dashboard/categories" element={<DashboardCategories />}/> {/* Nueva ruta */}
                     <Route path="/admins/dashboard/events/add" element={<AddEvent />} />
                     <Route path="/admins/dashboard/events/edit/:id" element={<UpdateEvent />}/>
+                    <Route path="/admins/dashboard/brands/edit/:id" element={<UpdateBrand />}/>
+                    <Route path="/admins/dashboard/categories/add" element={<AddCategory />}/> {/* Nueva ruta */}
+                    <Route path="/admins/dashboard/categories/edit/:id" element={<UpdateCategory />}/> {/* Nueva ruta */}
 
                     <Route path="/savedEvents" element={<SavedEvents />}/>
 

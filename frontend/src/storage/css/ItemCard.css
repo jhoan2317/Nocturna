@@ -1,0 +1,73 @@
+.item-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 400px; /* Ajustar el ancho */
+    height: 370px; /* Ajustar la altura */
+    position: relative; /* Necesario para posicionar el ícono del corazón */
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+}
+
+.item-card-img {
+    width: 100%;
+    height: 200px; /* Ajustar la altura de la imagen */
+    object-fit: cover; /* Asegurar que la imagen se ajuste al contenedor */
+}
+
+.item-card-body {
+    padding: 10px; /* Ajustar el padding */
+    text-align: center;
+    flex: 1; /* Permitir que el cuerpo ocupe el espacio restante */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribuir el espacio entre los elementos */
+}
+
+.item-card-title {
+    font-size: 16px; /* Ajustar el tamaño de la fuente */
+    font-weight: bold;
+    margin: 6px 0; /* Ajustar el margen */
+}
+
+.item-card-rating {
+    font-size: 14px; /* Ajustar el tamaño de la fuente */
+    color: #555;
+}
+
+.item-card-price {
+    font-size: 18px; /* Ajustar el tamaño de la fuente */
+    color: #007bff;
+    margin: 6px 0; /* Ajustar el margen */
+}
+
+.item-card-link {
+    display: inline-block;
+    margin-top: 6px; /* Ajustar el margen superior */
+    padding: 6px 12px; /* Ajustar el padding */
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.item-card-link:hover {
+    background-color: #0056b3;
+}
+
+.fa-heart {
+    cursor: pointer;
+    font-size: 18px; /* Ajustar el tamaño de la fuente */
+    position: absolute; /* Posicionar absolutamente */
+    top: 10px; /* Ajustar la posición superior */
+    right: 10px; /* Ajustar la posición derecha */
+}

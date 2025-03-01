@@ -12,19 +12,12 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        return Category::all();
+        return response()->json(Category::all(), 200);
     }
 
-    public function categoryEvents(Request $request){
-        return Category::where('title', $request->title)->first()->events;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function categoryEvents(Request $request)
     {
-        //
+        return Category::where('title', $request->title)->first()->events;
     }
 
     /**
@@ -32,23 +25,15 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $category = new Category();
+        $category->title = $request->input('title');
+        $category->save();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return response()->json(['success' => true, 'category' => $category], 201);
     }
 
     /**
@@ -56,7 +41,15 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $category = Category::findOrFail($id);
+        $category->title = $request->input('title');
+        $category->save();
+
+        return response()->json(['success' => true, 'category' => $category], 200);
     }
 
     /**
@@ -64,6 +57,9 @@ class CategoriesController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = Category::findOrFail($id);
+        $category->delete();
+
+        return response()->json(['success' => true], 200);
     }
 }

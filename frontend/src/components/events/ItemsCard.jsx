@@ -17,7 +17,7 @@ const ItemsCard = ({events, brand = null, state}) => {
                     && <ItemCard event={event} key={event.id} />
                 )}
             <div className="btnParent">
-                <NavLink className="btn" to={`/brands/${brand}`}>More ...</NavLink>
+                <NavLink className="btn" to={`/brands/${brand}`}>Ver más ...</NavLink>
             </div>
     </>
 

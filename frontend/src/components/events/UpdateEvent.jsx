@@ -1,123 +1,165 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
 
-const UpdateEvent = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    location: "",
-    price: "",
-    rating: "",
-    imgPath: "",
-    category_id: "",
-    brand_id: ""
-  });
-  const [error, setError] = useState("");
+const UpdateEvent = ({ event, closeModal, onSuccess }) => {
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [location, setLocation] = useState("");
+    const [price, setPrice] = useState("");
+    const [rating, setRating] = useState("");
+    const [brandId, setBrandId] = useState("");
+    const [categoryId, setCategoryId] = useState("");
+    const [brands, setBrands] = useState([]);
+    const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    axios.get(`http://localhost:8000/api/events/show/${id}`)
-      .then((res) => {
-        setFormData(res.data);
-      })
-      .catch((err) => {
-        setError("Error al cargar el evento");
-      });
-  }, [id]);
+    useEffect(() => {
+        if (event) {
+            setTitle(event.title);
+            setDescription(event.description);
+            setLocation(event.location);
+            setPrice(event.price);
+            setRating(event.rating);
+            setBrandId(event.brand.id);
+            setCategoryId(event.category.id);
+        }
+    }, [event]);
 
-  const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
+    useEffect(() => {
+        const fetchBrandsAndCategories = async () => {
+            try {
+                const brandsRes = await axios.get("http://localhost:8000/api/brands");
+                setBrands(brandsRes.data);
+                const categoriesRes = await axios.get("http://localhost:8000/api/categories");
+                setCategories(categoriesRes.data);
+            } catch (err) {
+                console.error(err.message);
+            }
+        };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    try {
-      const res = await axios.put(`http://localhost:8000/api/events/${id}`, formData);
-      if (res.data.success) {
-        navigate("/admins/dashboard/events");
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || "Error al actualizar el evento");
-    }
-  };
+        fetchBrandsAndCategories();
+    }, []);
 
-  return (
-    <div className="content dashboardEvents">
-      <h2>Update Event</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          value={formData.location}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="number"
-          name="price"
-          placeholder="Price"
-          value={formData.price}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="number"
-          name="rating"
-          placeholder="Rating"
-          value={formData.rating}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="imgPath"
-          placeholder="Image Path"
-          value={formData.imgPath}
-          onChange={handleChange}
-        />
-        <input
-          type="number"
-          name="category_id"
-          placeholder="Category ID"
-          value={formData.category_id}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="number"
-          name="brand_id"
-          placeholder="Brand ID"
-          value={formData.brand_id}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Update Event</button>
-      </form>
-    </div>
-  );
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await axios.put(`http://localhost:8000/api/events/${event.id}`, {
+                title,
+                description,
+                location,
+                price,
+                rating,
+                brand_id: brandId,
+                category_id: categoryId,
+            });
+            if (res.data.success) {
+                onSuccess();
+                closeModal();
+            }
+        } catch (err) {
+            console.error(err.message);
+        }
+    };
+
+    return (
+        <div className="update-event-modal">
+            <div className="left-side">
+                <h2>Actualizar Evento</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label>Título</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Descripción</label>
+                        <textarea
+                            className="form-control"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        ></textarea>
+                    </div>
+                    <div className="form-group">
+                        <label>Ubicación</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Precio</label>
+                        <input
+                            type="number"
+                            className="form-control"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Puntaje</label>
+                        <input
+                            type="number"
+                            className="form-control"
+                            value={rating}
+                            onChange={(e) => setRating(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Marca</label>
+                        <select
+                            className="form-control"
+                            value={brandId}
+                            onChange={(e) => setBrandId(e.target.value)}
+                        >
+                            {brands.map((brand) => (
+                                <option key={brand.id} value={brand.id}>
+                                    {brand.title}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label>Categoría</label>
+                        <select
+                            className="form-control"
+                            value={categoryId}
+                            onChange={(e) => setCategoryId(e.target.value)}
+                        >
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.id}>
+                                    {category.title}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <button type="submit" className="btn btn-primary">
+                        Actualizar
+                    </button>
+                    <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                        Cancelar
+                    </button>
+                </form>
+            </div>
+            <div className="right-side">
+                <h2>Información del Evento</h2>
+                <p><strong>Título:</strong> {event.title}</p>
+                <p><strong>Descripción:</strong> {event.description}</p>
+                <p><strong>Ubicación:</strong> {event.location}</p>
+                <p><strong>Precio:</strong> {event.price}</p>
+                <p><strong>Puntaje:</strong> {event.rating}</p>
+                <p><strong>Marca:</strong> {event.brand.title}</p>
+                <p><strong>Categoría:</strong> {event.category.title}</p>
+                {event.imgPath && (
+                    <img src={`/events_img/${event.imgPath}`} alt="event" style={{ width: "100%", height: "auto" }} />
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default UpdateEvent;

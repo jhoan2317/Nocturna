@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-const AddEvent = () => {
-  const navigate = useNavigate();
+const AddEvent = ({ closeModal, onSuccess }) => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [formData, setFormData] = useState({
@@ -17,7 +15,6 @@ const AddEvent = () => {
     brand_id: ""
   });
   const [error, setError] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState(null);
   const [imagePreview, setImagePreview] = useState(null); // Estado para la previsualización de la imagen
 
   useEffect(() => {
@@ -61,7 +58,18 @@ const AddEvent = () => {
         }
       });
       if (res.data.success) {
-        navigate("/admins/dashboard/events");
+        onSuccess();
+        setFormData({
+          title: "",
+          description: "",
+          location: "",
+          price: "",
+          rating: "",
+          imgPath: null,
+          category_id: "",
+          brand_id: ""
+        });
+        setImagePreview(null);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Error al crear el evento");
@@ -69,113 +77,121 @@ const AddEvent = () => {
   };
 
   return (
-    <div className="content dashboardEvents" style={{ padding: "-40px" }}>
-      <h2 style={{ textAlign: "center" }}>Create Event</h2>
-      {error && <p className="text-danger">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3" style={{ marginBottom: "1rem" }}>
-          <label className="form-label">Title</label>
-          <input 
-            type="text" 
-            name="title" 
-            placeholder="Enter event title" 
-            value={formData.title} 
-            onChange={handleChange} 
-            className="form-control" 
-            required 
-          />
-        </div>
-        <div className="mb-3" style={{ marginBottom: "1rem" }}>
-          <label className="form-label">Description</label>
-          <textarea 
-            name="description" 
-            placeholder="Enter a detailed description" 
-            value={formData.description} 
-            onChange={handleChange} 
-            className="form-control" 
-            required 
-          />
-        </div>
-        <div className="mb-3" style={{ marginBottom: "1rem" }}>
-          <label className="form-label">Location</label>
-          <input 
-            type="text" 
-            name="location" 
-            placeholder="Enter event location" 
-            value={formData.location} 
-            onChange={handleChange} 
-            className="form-control" 
-            required 
-          />
-        </div>
-        <div className="mb-3" style={{ marginBottom: "1rem" }}>
-          <label className="form-label">Price</label>
-          <input 
-            type="number" 
-            name="price" 
-            placeholder="Enter event price" 
-            value={formData.price} 
-            onChange={handleChange} 
-            className="form-control" 
-            required 
-          />
-        </div>
-        <div className="mb-3" style={{ marginBottom: "1rem" }}>
-          <label className="form-label">Rating</label>
-          <input 
-            type="number" 
-            name="rating" 
-            placeholder="Enter event rating (e.g., 4.5)" 
-            value={formData.rating} 
-            onChange={handleChange} 
-            className="form-control" 
-            required 
-          />
-        </div>
-        <div className="mb-3" style={{ marginBottom: "1rem" }}>
-          <label className="form-label">Image</label>
-          <input 
-            type="file" 
-            name="imgPath" 
-            onChange={handleImageChange} 
-            className="form-control" 
-          />
-          {imagePreview && <img src={imagePreview} alt="Preview" style={{ marginTop: "10px", maxWidth: "30%", height: "auto" }} />}
-        </div>
-        <div className="mb-3" style={{ marginBottom: "1rem" }}>
-          <label className="form-label">Category</label>
-          <select 
-            name="category_id" 
-            value={formData.category_id} 
-            onChange={handleChange} 
-            className="form-select" 
-            required
-          >
-            <option value="">Select a category</option>
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.id}>{cat.title}</option>
-            ))}
-          </select>
-        </div>
-        <div className="mb-3" style={{ marginBottom: "1rem" }}>
-          <label className="form-label">Brand</label>
-          <select 
-            name="brand_id" 
-            value={formData.brand_id} 
-            onChange={handleChange} 
-            className="form-select" 
-            required
-          >
-            <option value="">Select a brand</option>
-            {brands.map(brand => (
-              <option key={brand.id} value={brand.id}>{brand.title}</option>
-            ))}
-          </select>
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Create Event
-        </button>
-      </form>
+    <div className="add-event-modal">
+      <div className="left-side">
+        <h2>Crear Evento</h2>
+        {error && <p className="text-danger">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Título</label>
+            <input 
+              type="text" 
+              name="title" 
+              placeholder="Introduce el título del evento" 
+              value={formData.title} 
+              onChange={handleChange} 
+              className="form-control" 
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <label>Descripción</label>
+            <textarea 
+              name="description" 
+              placeholder="Introduce una descripción detallada" 
+              value={formData.description} 
+              onChange={handleChange} 
+              className="form-control" 
+              required 
+            ></textarea>
+          </div>
+          <div className="form-group">
+            <label>Ubicación</label>
+            <input 
+              type="text" 
+              name="location" 
+              placeholder="Introduce la ubicación del evento" 
+              value={formData.location} 
+              onChange={handleChange} 
+              className="form-control" 
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <label>Precio</label>
+            <input 
+              type="number" 
+              name="price" 
+              placeholder="Introduce el precio del evento" 
+              value={formData.price} 
+              onChange={handleChange} 
+              className="form-control" 
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <label>Puntaje</label>
+            <input 
+              type="number" 
+              name="rating" 
+              placeholder="Introduce el puntaje del evento (ej., 4.5)" 
+              value={formData.rating} 
+              onChange={handleChange} 
+              className="form-control" 
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <label>Imagen</label>
+            <input 
+              type="file" 
+              name="imgPath" 
+              onChange={handleImageChange} 
+              className="form-control" 
+            />
+          </div>
+          <div className="form-group">
+            <label>Categoría</label>
+            <select 
+              name="category_id" 
+              value={formData.category_id} 
+              onChange={handleChange} 
+              className="form-select" 
+              required
+            >
+              <option value="">Selecciona una categoría</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.title}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Marca</label>
+            <select 
+              name="brand_id" 
+              value={formData.brand_id} 
+              onChange={handleChange} 
+              className="form-select" 
+              required
+            >
+              <option value="">Selecciona una marca</option>
+              {brands.map(brand => (
+                <option key={brand.id} value={brand.id}>{brand.title}</option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Crear Evento
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={closeModal}>
+            Cancelar
+          </button>
+        </form>
+      </div>
+      <div className="right-side">
+        <h2>Previsualización de la Imagen</h2>
+        {imagePreview && <img src={imagePreview} alt="Preview" style={{ width: "100%", height: "auto" }} />}
+      </div>
     </div>
   );
 };

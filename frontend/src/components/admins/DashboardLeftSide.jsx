@@ -8,6 +8,8 @@ const DashboardLeftSide = () => {
                 <nav>
                     <NavLink className='my-2' to="/admins/dashboard/users">Usuarios</NavLink>
                     <NavLink className='my-2' to="/admins/dashboard/events">Eventos</NavLink>
+                    <NavLink className='my-2' to="/admins/dashboard/brands">Marcas</NavLink>
+                    <NavLink className='my-2' to="/admins/dashboard/categories">Categorias</NavLink>
                 </nav>
             </div>
         </div>
