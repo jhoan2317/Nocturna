@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3000'],
+    'allowed_origins' => [
+        'http://localhost:3000', // Permitir el frontend local
+        'http://nocturna-production-0cc5.up.railway.app', // Permitir el frontend en producción
+    ],
 
     'allowed_origins_patterns' => [],
 
