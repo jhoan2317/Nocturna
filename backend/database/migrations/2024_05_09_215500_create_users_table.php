@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('birthday')->nullable(); 
             $table->string('gender')->nullable();
             $table->string('role');
-            $table->integer('active');
+            $table->boolean('active')->default(1);
 
             $table->bigInteger('profile_id')->unsigned();
             $table->foreign('profile_id')->references('id')->on('profiles');

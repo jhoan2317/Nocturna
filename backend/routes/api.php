@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\PasswordResetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController;
@@ -59,3 +60,8 @@ Route::get('/statistics', [StatisticsController::class, 'index']);
 // Suscripción
 Route::post('/subscribe', [SubscriptionController::class, 'store']);
 
+Route::prefix('password-reset')->group(function () {
+    Route::post('/request', [PasswordResetController::class, 'sendResetLink']);
+    Route::post('/verify', [PasswordResetController::class, 'verifyToken']);
+    Route::post('/reset', [PasswordResetController::class, 'resetPassword']);
+});

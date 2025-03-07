@@ -12,12 +12,12 @@ class UsersController extends Controller
     //
     public function index()
     {
-        return User::where('role', 'user')->where('active', 1)->with('profile')->get();
+        return User::where('role', 'user')->with('profile')->get();
     }
 
     public function login(Request $request){
         $data = $request->only('email', 'password');
-
+        
         if(Auth::attempt($data)){
             $user = Auth::user();
             if($user->active){
@@ -30,7 +30,7 @@ class UsersController extends Controller
                 return response()->json(['success'=>false]);
             }
         }
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        return response()->json(['message' => 'Credenciales invalidas'], 401);
     }
 
     public function logout(Request $request){
@@ -62,13 +62,16 @@ class UsersController extends Controller
         }
     }
 
-    public function block(User $user){
+    public function block(User $user) {
         $user->update([
-            'active' => 0
+            'active' => !$user->active // Alterna entre 0 y 1
         ]);
-        $users = User::where('role', 'user')->where('active', 1)->with('profile')->get();
-        return response()->json(['success'=>true, 'users'=>$users], 200);
+    
+        $users = User::where('role', 'user')->with('profile')->get();
+    
+        return response()->json(['success' => true, 'users' => $users], 200);
     }
+    
 
     /**
      * Update the specified resource in storage.
