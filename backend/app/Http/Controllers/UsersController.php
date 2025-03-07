@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
+    //
     public function index()
     {
         return User::where('role', 'user')->where('active', 1)->with('profile')->get();
     }
+
     public function login(Request $request){
         $data = $request->only('email', 'password');
 
