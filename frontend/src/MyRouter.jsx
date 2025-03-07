@@ -22,7 +22,7 @@ import AccountInfo from "./components/users/AccountInfo";
 import UpdateBrand from "./components/brands/UpdateBrand";
 import UpdateCategory from "./components/categories/UpdateCategory"; // Importar el nuevo componente
 import AddCategory from "./components/categories/AddCategory"; // Importar el nuevo componente
-
+import ForgotPassword from  "./components/users/ForgotPassword"; // Importa la nueva página
 const MyRouter = () => {
     return (
         <MainRouter>
@@ -51,7 +51,7 @@ const MyRouter = () => {
 
                     <Route path="/users/account" element={<Account />}/>
                     <Route path="/users/account/info" element={<AccountInfo />}/>
-
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
                 </Routes>
             <Footer />
         </MainRouter>
