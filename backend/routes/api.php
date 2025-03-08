@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\PasswordResetController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController;
@@ -8,6 +8,7 @@ use App\Http\Controllers\EventsController;
 use App\Http\Controllers\Brandscontroller;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\SavedEventsController;
 use App\Http\Controllers\SubscriptionController;
