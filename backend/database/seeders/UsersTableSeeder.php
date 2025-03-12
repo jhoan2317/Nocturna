@@ -12,18 +12,53 @@ class UsersTableSeeder extends Seeder
     public function run(): void
     {
         $date = new DateTime('now');
-        $date3 = date('1994-05-18');$password1 = bcrypt('admin123');
-        $date1 = date('2002-06-10');$password2 = bcrypt('123456');
-        $date2 = date('2003-10-21');$password3 = bcrypt('123456');
+        $password1 = bcrypt('admin123');
+        $password2 = bcrypt('client123');
+        $password3 = bcrypt('user123');
+
         $data = [
-            ['name'=>'Administrador', 'last_name'=>'Pro', 'birthday'=>$date1, 'email'=>'admin@gmail.com', 'password'=>$password1, 'role'=>'admin', 'active'=>1, 'profile_id'=>1, 'created_at'=>$date, 'updated_at'=>$date],
-            ['name'=>'Usuario1', 'last_name'=>'Prueba1', 'birthday'=>$date2, 'email'=>'user1@gmail.com', 'password'=>$password2, 'role'=>'user', 'active'=>1, 'profile_id'=>2, 'created_at'=>$date, 'updated_at'=>$date],
-            ['name'=>'Usuario2', 'last_name'=>'Prueba2', 'birthday'=>$date3, 'email'=>'user2@gmail.com', 'password'=>$password3, 'role'=>'user', 'active'=>1, 'profile_id'=>3, 'created_at'=>$date, 'updated_at'=>$date]
+            [
+                'name' => 'Administrador',
+                'last_name' => 'Sistema',
+                'birthday' => '1990-01-01',
+                'email' => 'admin@gmail.com',
+                'password' => $password1,
+                'role' => 'admin',
+                'active' => 1,
+                'profile_id' => 1,
+                'created_at' => $date,
+                'updated_at' => $date
+            ],
+            [
+                'name' => 'Cliente',
+                'last_name' => 'Ejemplo',
+                'birthday' => '1985-05-15',
+                'email' => 'client@gmail.com',
+                'password' => $password2,
+                'role' => 'client',
+                'active' => 1,
+                'profile_id' => 2,
+                'created_at' => $date,
+                'updated_at' => $date
+            ],
+            [
+                'name' => 'Usuario',
+                'last_name' => 'Normal',
+                'birthday' => '1995-03-10',
+                'email' => 'user@gmail.com',
+                'password' => $password3,
+                'role' => 'user',
+                'active' => 1,
+                'profile_id' => 3,
+                'created_at' => $date,
+                'updated_at' => $date
+            ]
         ];
 
         foreach ($data as $item) {
             $item['slug'] = Str::random(5) . '-' . Str::slug($item['name']);
-            User::updateOrCreate($item);
+            $user = User::updateOrCreate($item);
+            $user->assignRole($item['role']);
         }
     }
 }

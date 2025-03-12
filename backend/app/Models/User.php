@@ -5,18 +5,21 @@ namespace App\Models;
 use Illuminate\Support\Str;
 use App\Traits\UseSlugAsKey;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, UseSlugAsKey;
-    protected $table = "users"; // NNOMBRE DE LA TABLA
-    protected $fillable = [ // PASAR LOS NOMBRES DE LOS ATRIBUTOS DE LA TABLA PORQUE CON ESLLOS SE INTERACTUA EN EL CONTROLADOR
+    protected $table = "users"; 
+    protected $fillable = [ 
         'slug',
         'name',
         'last_name',
@@ -29,7 +32,7 @@ class User extends Authenticatable
         'profile_id'
     ];
 
-    public static function boot()// SE GENERA EL SLUG AUTOMATICAMENTE CON 12 CARACTERES
+    public static function boot()
     {
         parent::boot();
         self::creating(function ($model) {
@@ -37,27 +40,31 @@ class User extends Authenticatable
         });
     }
 
-    protected $attributes = [ // EL ATRIBUTO CUMPLEAÑOS SE DEBE GENERAR CON AA/MM/DD
+    protected $attributes = [ 
         'birthday' => '1970-01-01',
     ];
 
-    protected $hidden = [// TANTO LOS ATRIBUTOS COMO CONTRASEÑA Y TOKEN NO SON VISIBLES SE GENERA ***
+    protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    protected $casts = [/// VERIFICA QUE SEA TIPO FECHA Y HORA
+    protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-    public function profile(): BelongsTo //LA RELACIO QUE TIENE LA TABLA USUARIOS CON PERFIL QUE ES GUARDAR UNA FOTO DE PERFIL
+    public function profile(): BelongsTo 
     {
         return $this->belongsTo(Profile::class);
     }
 
-    public function savedEvents(): HasMany // LA RELACION QE TIENE GUARDAREVENTOS CON LA TABLA USUARIS QUE PUEDE SER QUE UN USUARIO GUARDE VRIOS EVENTOS
+    public function savedEvents(): HasMany 
     {
         return $this->hasMany(SavedEvent::class);
     }
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasRole('admin');
+    }
 }

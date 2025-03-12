@@ -25,6 +25,11 @@ class RedirectIfAuthenticated
             }
         }
 
+        // Si la ruta comienza con /admin y no hay sesión, redirigir al frontend
+        if ($request->is('admin*') && !Auth::check()) {
+            return redirect('http://localhost:3000/users/login');
+        }
+
         return $next($request);
     }
 }

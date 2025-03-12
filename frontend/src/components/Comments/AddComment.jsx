@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from '../../axios/axios';
 import React, { useRef } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +21,7 @@ const AddComment = ({id, updateComments, setComments}) => {
                     event_id: id,
                     user_id: user.id
                 }
-                axios.post('http://localhost:8000/api/comments/store', data)
+                api.post('/api/comments/store', data)
                 .then(res => {
                     if(res.data.success){
                         event.target.value = '';

@@ -66,3 +66,9 @@ Route::prefix('password-reset')->group(function () {
     Route::post('/verify', [PasswordResetController::class, 'verifyToken']);
     Route::post('/reset', [PasswordResetController::class, 'resetPassword']);
 });
+
+Route::get('/check-auth', function () {
+    return response()->json([
+        'authenticated' => auth()->check() && auth()->user() !== null
+    ]);
+});

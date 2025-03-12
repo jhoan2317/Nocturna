@@ -15,23 +15,20 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'admin/*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'http://localhost:3000', // Permitir el frontend local
-        'http://nocturna-production-0cc5.up.railway.app', // Permitir el frontend en producción
-    ],      
+    'allowed_origins' => ['http://localhost:3000'],
 
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 
-    'exposed_headers' => [],
+    'exposed_headers' => ['*'],
 
-    'max_age' => 0,
+    'max_age' => 7200,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];

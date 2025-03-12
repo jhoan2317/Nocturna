@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class UsersController extends Controller
 {
@@ -18,27 +20,53 @@ class UsersController extends Controller
     public function login(Request $request){
         $data = $request->only('email', 'password');
         
-        if(Auth::attempt($data)){
+        if (Auth::attempt($data)) {
             $user = Auth::user();
-            if($user->active){
-                $token = $user->createToken('authToken')->plainTextToken;
-
+            if ($user->active) {
                 $u = User::with('profile')->find($user->id);
-                $savedEvents = User::find($user->id)->savedevents()->with('event.brand')->get();
-                return response()->json(['success'=>true, 'token' => $token, 'user' => $u, 'savedEvents' => $savedEvents], 200);
-            }else{
-                return response()->json(['success'=>false]);
+                $savedEvents = $u->savedevents()->with('event.brand')->get();
+                
+                // Check if user has admin role
+                $isAdmin = $user->role === 'admin';
+                
+                if ($isAdmin) {
+                    Auth::guard('web')->login($user);
+                    session()->regenerate();
+                    
+                    return response()->json([
+                        'success' => true,
+                        'redirect' => 'http://localhost:8000/admin'
+                    ], 200);
+                }
+                
+                return response()->json([
+                    'success' => true,
+                    'user' => $u,
+                    'savedEvents' => $savedEvents,
+                    'isAdmin' => $isAdmin
+                ], 200);
+            } else {
+                return response()->json(['success' => false]);
             }
         }
         return response()->json(['message' => 'Credenciales invalidas'], 401);
     }
 
-    public function logout(Request $request){
-        // return 'logout';
-        if ($request->user()) {
-            $request->user()->currentAccessToken()->delete();
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        // Si la petición viene de Filament o del admin panel
+        if ($request->is('admin/logout') || str_contains($request->header('Referer') ?? '', '/admin')) {
+            return redirect('http://localhost:3000/users/login');
         }
-        return response()->json(['message' => 'Logged out successfully'], 200);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sesión cerrada correctamente'
+        ]);
     }
 
     /**
