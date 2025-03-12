@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from '../../axios/axios';
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,7 +15,7 @@ const ShowEventCard = ({ event }) => {
         if (isAuthenticated) {
             if (!isSaved) {
                 try {
-                    const res = await axios.post('http://localhost:8000/api/savedEvents/store', { user_id: user.id, event_id: event.id });
+                    const res = await api.post('/api/savedEvents/store', { user_id: user.id, event_id: event.id });
                     if (res.data.success) {
                         setIsSaved(true);
                         dispatch({ type: 'setSavedEvents', payload: { data: res.data.savedEvents } });
@@ -25,7 +25,7 @@ const ShowEventCard = ({ event }) => {
                 }
             } else {
                 try {
-                    const res = await axios.delete(`http://localhost:8000/api/savedEvents/destroy/${event.id}/${user.id}`);
+                    const res = await api.delete(`/api/savedEvents/destroy/${event.id}/${user.id}`);
                     if (res.data.success) {
                         setIsSaved(false);
                         dispatch({ type: 'setSavedEvents', payload: { data: res.data.savedEvents } });

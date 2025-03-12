@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
+import api from '../../axios/axios';
 import "../../storage/css/ItemCard.css";
 
 const ItemCard = ({ event }) => {
@@ -16,23 +16,26 @@ const ItemCard = ({ event }) => {
         if (isAuthenticated) {
             if (!isSaved) {
                 try {
-                    const res = await axios.post('http://localhost:8000/api/savedEvents/store', { user_id: user.id, event_id: event.id });
+                    const res = await api.post('/api/savedEvents/store', { 
+                        user_id: user.id, 
+                        event_id: event.id 
+                    });
                     if (res.data.success) {
                         setIsSaved(true);
                         dispatch({ type: 'setSavedEvents', payload: { data: res.data.savedEvents } });
                     }
-                } catch (e) {
-                    console.log(e.message);
+                } catch (error) {
+                    console.error("Error al guardar evento:", error.response?.data || error.message);
                 }
             } else {
                 try {
-                    const res = await axios.delete(`http://localhost:8000/api/savedEvents/destroy/${event.id}/${user.id}`);
+                    const res = await api.delete(`/api/savedEvents/destroy/${event.id}/${user.id}`);
                     if (res.data.success) {
                         setIsSaved(false);
                         dispatch({ type: 'setSavedEvents', payload: { data: res.data.savedEvents } });
                     }
-                } catch (e) {
-                    console.log(e.message);
+                } catch (error) {
+                    console.error("Error al eliminar evento guardado:", error.response?.data || error.message);
                 }
             }
         } else {

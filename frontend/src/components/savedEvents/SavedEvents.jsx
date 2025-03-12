@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import api from '../../axios/axios';
 import Spinner from "../../partials/Spinner";
 
 const SavedEvents = () => {
@@ -42,21 +42,23 @@ const SavedEvents = () => {
                         : (savedEvents.length === 0
                             ? <tr><td colSpan={9} className="text-center p-4">Sin preferencias</td></tr>
                             : savedEvents.map(savedEvent =>
-                                <tr key={savedEvent.id}>
-                                    <td>{savedEvent.event.id}</td>
-                                    <td>
-                                        <Link to={`/events/show/${savedEvent.event.id}`}>
-                                            <img src={`/events_img/${savedEvent.event.imgPath}`} alt="event" />
-                                        </Link>
-                                    </td>
-                                    <td>{savedEvent.event.title}</td>
-                                    <td>{savedEvent.event.description}</td>
-                                    <td>{savedEvent.event.location}</td>
-                                    <td>{savedEvent.event.price}</td>
-                                    <td>{savedEvent.event.rating}</td>
-                                    <td>{savedEvent.event.category.title}</td>
-                                    <td>{savedEvent.event.brand.title}</td>
-                                </tr>
+                                savedEvent?.event && (
+                                    <tr key={savedEvent.id}>
+                                        <td>{savedEvent.event.id}</td>
+                                        <td>
+                                            <Link to={`/events/show/${savedEvent.event.id}`}>
+                                                <img src={`/events_img/${savedEvent.event.imgPath}`} alt="event" />
+                                            </Link>
+                                        </td>
+                                        <td>{savedEvent.event.title}</td>
+                                        <td>{savedEvent.event.description}</td>
+                                        <td>{savedEvent.event.location}</td>
+                                        <td>{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(savedEvent.event.price)}</td>
+                                        <td>{savedEvent.event.rating}</td>
+                                        <td>{savedEvent.event.category?.title || 'N/A'}</td>
+                                        <td>{savedEvent.event.brand?.title || 'N/A'}</td>
+                                    </tr>
+                                )
                             )
                         )
                     }

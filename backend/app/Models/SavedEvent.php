@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use App\Traits\UseSlugAsKey;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
@@ -19,14 +20,22 @@ class SavedEvent extends Model
         'user_id',
         'event_id'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+        self::creating(function ($model) {
+            $model['slug'] = Str::random(12);
+        });
+    }
     
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
+
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
     }
-
 }
