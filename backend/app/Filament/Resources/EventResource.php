@@ -22,15 +22,9 @@ class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
-<<<<<<< HEAD
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
     protected static ?string $navigationGroup = 'Sitios Turísticos';
-=======
-    protected static ?string $navigationIcon = 'heroicon-o-ticket';
-
-    protected static ?string $navigationGroup = 'Eventos';
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
 
     protected static ?int $navigationSort = 1;
 
@@ -46,14 +40,11 @@ class EventResource extends Resource
         return 'Gestionar eventos y actividades';
     }
 
-<<<<<<< HEAD
     public static function shouldRegisterNavigation(): bool
     {
         return true;
     }
 
-=======
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
     public static function form(Form $form): Form
     {
         return $form

@@ -16,13 +16,8 @@ class UsersController extends Controller
     {
         return User::where('role', 'user')->with('profile')->get();
     }
-<<<<<<< HEAD
     public function login(Request $request)
     {
-=======
-
-    public function login(Request $request){
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
         $data = $request->only('email', 'password');
         
         if (Auth::attempt($data)) {

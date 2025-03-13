@@ -21,7 +21,6 @@ class BrandResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
-<<<<<<< HEAD
     protected static ?string $navigationGroup = 'Sitios Turísticos';
 
     protected static ?int $navigationSort = 2;
@@ -31,42 +30,23 @@ class BrandResource extends Resource
     public static function getNavigationLabel(): string
     {
         return 'Lugares';
-=======
-    protected static ?string $navigationGroup = 'Eventos';
-
-    protected static ?int $navigationSort = 2;
-
-    protected static ?string $navigationLabel = 'Marcas';
-
-    public static function getNavigationLabel(): string
-    {
-        return 'Marcas';
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
     }
 
     public static function getNavigationTooltip(): string
     {
-<<<<<<< HEAD
         return 'Gestionar categorías de eventos';
     }
 
     public static function shouldRegisterNavigation(): bool
     {
         return true;
-=======
-        return 'Gestionar marcas y proveedores';
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-<<<<<<< HEAD
                 Section::make('Información de la Categoría')
-=======
-                Section::make('Información de la Marca')
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
                     ->schema([
                         TextInput::make('title')
                             ->required()

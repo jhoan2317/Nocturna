@@ -11,19 +11,11 @@ const UserIcon = () => {
     const navigate = useNavigate();
     const [displayDiv, setDisplayDiv] = useState(false);
     const routes = [
-<<<<<<< HEAD
         {id:0, name:'Cuenta', route:'/users/account', isAuthenticated: true, tooltip: 'Gestiona tu perfil y configuración'},
         {id:1, name:'Preferencias', route:'/savedEvents', isAuthenticated: true, tooltip: 'Ver tus eventos guardados'},
         {id:2, name:'Ingreso', route:'/users/login', isAuthenticated: false, tooltip: 'Inicia sesión en tu cuenta'},
         {id:3, name:'Desconectarse', isAuthenticated: true, tooltip: 'Cerrar sesión'},
         {id:4, name:'Registro', route:'/users/register', isAuthenticated: null, tooltip: 'Crear una nueva cuenta'}
-=======
-        {id:0, name:'Cuenta', route:'/users/account', isAuthenticated: true},
-        {id:1, name:'Preferencias', route:'/savedEvents', isAuthenticated: true},
-        {id:2, name:'Ingreso', route:'/users/login', isAuthenticated: false},
-        {id:3, name:'Desconectarse', isAuthenticated: true},
-        {id:4, name:'Registro', route:'/users/register', isAuthenticated: null}
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
     ];
 
     const handleLogOut = async () => {
@@ -44,26 +36,16 @@ const UserIcon = () => {
     return(
         <div className="userIcon">
             {!isAuthenticated
-<<<<<<< HEAD
                 ? <i className="fa-solid fa-circle-user" onClick={()=>setDisplayDiv(!displayDiv)} title="Opciones de cuenta"></i>
                 : <img src={`/users_img/${user.profile.profilePic != null ? user.profile.profilePic : 'no-img.jpg'}`} alt="" onClick={()=>setDisplayDiv(!displayDiv)} title="Tu perfil"/>
-=======
-                ? <i className="fa-solid fa-circle-user" onClick={()=>setDisplayDiv(!displayDiv)}></i>
-                : <img src={`/users_img/${user.profile.profilePic != null ? user.profile.profilePic : 'no-img.jpg'}`} alt="" onClick={()=>setDisplayDiv(!displayDiv)}/>
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
             }
             <div className={displayDiv ? 'open' : ''}>
                 {routes.map(r =>
                     (isAuthenticated === r.isAuthenticated || r.isAuthenticated == null)
                     && (
                         r.name === 'Desconectarse'
-<<<<<<< HEAD
                         ? <span onClick={handleLogOut} key={r.id} title={r.tooltip}>{r.name}</span>
                         : <NavLink key={r.id} to={r.route} onClick={()=>setDisplayDiv(false)} title={r.tooltip}>{r.name}</NavLink> 
-=======
-                        ? <span onClick={handleLogOut} key={r.id}>{r.name}</span>
-                        : <NavLink key={r.id} to={r.route} onClick={()=>setDisplayDiv(false)}>{r.name}</NavLink> 
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
                     ) 
                 )}
             </div>

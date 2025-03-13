@@ -17,15 +17,9 @@ use Filament\Panel;
 
 class User extends Authenticatable implements FilamentUser
 {
-<<<<<<< HEAD
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, UseSlugAsKey, HasRoles;
     protected $table = "users";
     protected $fillable = [
-=======
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, UseSlugAsKey;
-    protected $table = "users"; 
-    protected $fillable = [ 
->>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
         'slug',
         'name',
         'last_name',
