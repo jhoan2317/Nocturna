@@ -4,10 +4,53 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+
+// Configuración de axios optimizada
+const api = axios.create({
+    baseURL: 'http://localhost:8000',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+    },
+    withCredentials: true
+});
+
 const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isAuthenticated = useSelector(store => store.isAuthenticated);
+
+    // Verificar estado de sesión
+    const checkAuthStatus = async () => {
+        try {
+            const res = await api.get('/api/check-auth');
+            if (!res.data.authenticated) {
+                // Si no está autenticado en el backend, limpiar estado frontend
+                dispatch({ type: 'setIsAuthenticated', payload: { case: false } });
+                dispatch({ type: 'setUser', payload: { user: null } });
+                dispatch({ type: 'setSavedEvents', payload: { data: [] } });
+                window.localStorage.removeItem('user');
+                Cookies.remove('token', { path: '/' });
+            }
+        } catch (error) {
+            // Si hay error, asumir que no está autenticado
+            dispatch({ type: 'setIsAuthenticated', payload: { case: false } });
+            dispatch({ type: 'setUser', payload: { user: null } });
+            window.localStorage.removeItem('user');
+            Cookies.remove('token', { path: '/' });
+        }
+    };
+
+    useEffect(() => {
+        // Verificar estado inicial
+        checkAuthStatus();
+
+        // Verificar estado cada 30 segundos
+        const interval = setInterval(checkAuthStatus, 30000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -25,41 +68,29 @@ const Login = () => {
     const handleLogin = async (event) => {
         event.preventDefault();
         try {
-            const res = await axios.post('http://localhost:8000/api/users/login', data.current);
-            const { token, user, success, savedEvents } = res.data;
-    
+            const res = await api.post('/api/users/login', data.current);
+            const { success, redirect, user, savedEvents, isAdmin } = res.data;
+
             if (success) {
-                dispatch({ type: 'setIsAuthenticated', payload: { case: true } });
-                window.localStorage.setItem('user', JSON.stringify(user));
-                dispatch({ type: 'setUser', payload: { user } });
-                dispatch({ type: 'setSavedEvents', payload: { data: savedEvents } });
-    
-                Cookies.set('token', token, { expires: 10, sameSite: 'none', secure: true });
-    
-                console.log("Usuario logueado:", user); // 👀 Depuración
-    
-                // Asegurar que user.role existe
-                if (user && user.role) {
-                    const role = user.role.toLowerCase(); // Normalizamos el rol
-    
-                    if (role === 'admin') {
-                        navigate('/admins/dashboard');
-                    } else {
-                        navigate('/');
-                    }
+                if (redirect) {
+                    // Si hay una URL de redirección, ir allí (caso admin)
+                    window.location.replace(redirect);
                 } else {
-                    console.error("Error: No se recibió el rol del usuario.");
-                    navigate('/'); // Redirigir al home si no se obtiene el rol
+                    // Usuario normal
+                    dispatch({ type: 'setIsAuthenticated', payload: { case: true } });
+                    dispatch({ type: 'setUser', payload: { user } });
+                    dispatch({ type: 'setSavedEvents', payload: { data: savedEvents } });
+                    window.localStorage.setItem('user', JSON.stringify(user));
+                    navigate('/');
                 }
             } else {
                 setError('Esta cuenta está bloqueada, no puedes acceder.');
             }
         } catch (e) {
+            console.error("Error en login:", e.response?.data || e.message);
             setError('La combinación de correo electrónico y contraseña es inválida.');
-            console.error("Error en login:", e.message);
         }
     };
-    
 
     return (
         <div style={{ height: '90vh' }} className="content flex-column justify-content-center">
@@ -81,8 +112,8 @@ const Login = () => {
                     <button style={{ padding: '14px 0' }} type="submit" name="login" className="btn col-12 btn-dark rounded-1">Ingreso</button>
                 </div>
                 <div className="text-end px-3">
-    <Link to="/forgot-password" className="text-primary">¿Olvidaste tu contraseña?</Link>
-</div>
+                    <Link to="/forgot-password" className="text-primary">¿Olvidaste tu contraseña?</Link>
+                </div>
             </form>
         </div>
     );

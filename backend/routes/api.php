@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\PasswordResetController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController;
@@ -8,20 +8,12 @@ use App\Http\Controllers\EventsController;
 use App\Http\Controllers\Brandscontroller;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\SavedEventsController;
 use App\Http\Controllers\SubscriptionController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -71,6 +63,11 @@ Route::post('/subscribe', [SubscriptionController::class, 'store']);
 
 Route::prefix('password-reset')->group(function () {
     Route::post('/request', [PasswordResetController::class, 'sendResetLink']);
-    Route::post('/verify', [PasswordResetController::class, 'verifyToken']);
     Route::post('/reset', [PasswordResetController::class, 'resetPassword']);
+});
+
+Route::get('/check-auth', function () {
+    return response()->json([
+        'authenticated' => auth()->check() && auth()->user() !== null
+    ]);
 });

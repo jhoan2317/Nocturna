@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -25,17 +25,25 @@ class PasswordResetController extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        // Generar token y guardarlo
+        $user = User::where('email', $request->email)->first();
+        
+        // Generar un token temporal
         $token = Str::random(60);
+        
+        // Guardar el token en la base de datos
         DB::table('password_reset_tokens')->updateOrInsert(
             ['email' => $request->email],
             ['token' => $token, 'created_at' => Carbon::now()]
         );
 
-        // Simulación de envío de correo (aquí puedes integrar un servicio real)
-        Mail::raw("Tu token de restablecimiento es: $token", function ($message) use ($request) {
+        // URL directa al frontend para cambiar la contraseña
+        $resetUrl = "http://localhost:3000/reset-password?email=" . urlencode($request->email) . "&direct=true";
+
+        // Enviar el correo con el enlace directo
+        Mail::raw("Haz clic en el siguiente enlace para restablecer tu contraseña: <a href='" . $resetUrl . "'>LINK</a>", function ($message) use ($request) {
             $message->to($request->email)
                 ->subject('Restablecimiento de contraseña');
+            $message->getHeaders()->addTextHeader('Content-Type', 'text/html');
         });
 
         return response()->json(['message' => 'Correo de restablecimiento enviado.'], 200);
@@ -69,8 +77,7 @@ class PasswordResetController extends Controller
     public function resetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:password_reset_tokens,email',
-            'token' => 'required|string',
+            'email' => 'required|email|exists:users,email',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -78,20 +85,11 @@ class PasswordResetController extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        $reset = DB::table('password_reset_tokens')
-            ->where('email', $request->email)
-            ->where('token', $request->token)
-            ->first();
-
-        if (!$reset) {
-            return response()->json(['error' => 'Token inválido o expirado.'], 400);
-        }
-
-        // Actualizar la contraseña del usuario
+        // Actualizar la contraseña del usuario directamente
         $user = User::where('email', $request->email)->first();
         $user->update(['password' => Hash::make($request->password)]);
 
-        // Eliminar el token de la BD
+        // Limpiar cualquier token existente
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
         return response()->json(['message' => 'Contraseña actualizada correctamente.'], 200);

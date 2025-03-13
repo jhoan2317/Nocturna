@@ -24,7 +24,11 @@ const LeftSide = () => {
         <h3>Eventos</h3>
         <nav>
           {brands.map((brand) => (
-            <NavLink key={brand.id} to={`/brands/${brand.title}`}>
+            <NavLink 
+              key={brand.id} 
+              to={`/brands/${brand.title}`}
+              title={`Ver todos los eventos de ${brand.title}`}
+            >
               {brand.title}
             </NavLink>
           ))}
