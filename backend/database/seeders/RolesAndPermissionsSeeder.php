@@ -20,11 +20,19 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete events']);
         Permission::create(['name' => 'publish events']);
 
+<<<<<<< HEAD
         // Permisos para lugares (antes marcas)
         Permission::create(['name' => 'view places']);
         Permission::create(['name' => 'create places']);
         Permission::create(['name' => 'edit places']);
         Permission::create(['name' => 'delete places']);
+=======
+        // Permisos para marcas
+        Permission::create(['name' => 'view brands']);
+        Permission::create(['name' => 'create brands']);
+        Permission::create(['name' => 'edit brands']);
+        Permission::create(['name' => 'delete brands']);
+>>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
 
         // Permisos para categorías
         Permission::create(['name' => 'view categories']);
@@ -40,11 +48,15 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'block users']);
 
         // Permisos para comentarios
+<<<<<<< HEAD
         Permission::create(['name' => 'view comments']);
+=======
+>>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
         Permission::create(['name' => 'create comments']);
         Permission::create(['name' => 'delete comments']);
         Permission::create(['name' => 'moderate comments']);
 
+<<<<<<< HEAD
         // Permisos para preferencias
         Permission::create(['name' => 'view preferences']);
         Permission::create(['name' => 'manage preferences']);
@@ -53,6 +65,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'access admin panel']);
         Permission::create(['name' => 'manage admin panel']);
 
+=======
+>>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
         // Crear roles y asignar permisos
         
         // Administrador (acceso total)
@@ -66,22 +80,34 @@ class RolesAndPermissionsSeeder extends Seeder
             'create events',
             'edit events',
             'delete events',
+<<<<<<< HEAD
             'view places',
             'view categories',
             'create comments',
             'view preferences',
             'manage preferences'
+=======
+            'view brands',
+            'view categories',
+            'create comments'
+>>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
         ]);
 
         // Usuario normal (solo puede ver y guardar eventos, hacer comentarios)
         $user = Role::create(['name' => 'user']);
         $user->givePermissionTo([
             'view events',
+<<<<<<< HEAD
             'view places',
             'view categories',
             'create comments',
             'view preferences',
             'manage preferences'
+=======
+            'view brands',
+            'view categories',
+            'create comments'
+>>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
         ]);
     }
 } 

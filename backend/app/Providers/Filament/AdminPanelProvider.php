@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+<<<<<<< HEAD
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -18,6 +19,23 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+=======
+use Filament\Pages;
+use Filament\Panel;
+use Filament\Widgets;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Filament\Http\Middleware\Authenticate;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+>>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
+<<<<<<< HEAD
                 'primary' => Color::Emerald,
             ])
             ->navigationItems([
@@ -53,6 +72,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->sidebarCollapsibleOnDesktop()
             ->brandName('Panel Administrativo')
+=======
+                'primary' => Color::Amber,
+            ])
+>>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -63,6 +86,7 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
+<<<<<<< HEAD
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -79,3 +103,23 @@ class AdminPanelProvider extends PanelProvider
             ]);
     }
 }
+=======
+            ->middleware(['web'])
+            ->authMiddleware([
+                Authenticate::class,
+            ])
+            ->maxContentWidth('full')
+            ->renderHook(
+                'panels::user-menu.before',
+                fn () => view('filament.custom.user-menu')
+            )
+            ->navigationItems([
+                \Filament\Navigation\NavigationItem::make('Cerrar sesión')
+                    ->url('http://localhost:3000/users/login')
+                    ->icon('heroicon-o-arrow-right-on-rectangle')
+                    ->group('Cuenta')
+            ])
+            ->sidebarCollapsibleOnDesktop();
+    }
+} 
+>>>>>>> b2b2cf4189ef85c0e5dfea594b9c8d7fd0f7d831
