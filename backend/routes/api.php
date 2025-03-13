@@ -72,6 +72,11 @@ Route::post('/subscribe', [SubscriptionController::class, 'store']);
 
 Route::prefix('password-reset')->group(function () {
     Route::post('/request', [PasswordResetController::class, 'sendResetLink']);
-    Route::post('/verify', [PasswordResetController::class, 'verifyToken']);
     Route::post('/reset', [PasswordResetController::class, 'resetPassword']);
+});
+
+Route::get('/check-auth', function () {
+    return response()->json([
+        'authenticated' => auth()->check() && auth()->user() !== null
+    ]);
 });

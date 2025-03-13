@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const ResetPassword = () => {
     const emailRef = useRef();
-    const tokenRef = useRef();
     const passwordRef = useRef();
     const confirmPasswordRef = useRef();
     const [message, setMessage] = useState("");
@@ -13,13 +12,18 @@ const ResetPassword = () => {
     const location = useLocation();
 
     useEffect(() => {
-        // Obtener el email de la URL si existe
+        // Obtener el email y el parámetro direct de la URL
         const params = new URLSearchParams(location.search);
         const email = params.get("email");
-        if (email) {
+        const direct = params.get("direct");
+        
+        if (email && direct === "true") {
             emailRef.current.value = email;
+        } else {
+            // Si no viene de un enlace directo, redirigir a forgot-password
+            navigate("/forgot-password");
         }
-    }, [location]);
+    }, [location, navigate]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -32,12 +36,20 @@ const ResetPassword = () => {
         }
 
         try {
-            const res = await axios.post("http://localhost:8000/api/password-reset/reset", {
-                email: emailRef.current.value,
-                token: tokenRef.current.value,
-                password: passwordRef.current.value,
-                password_confirmation: confirmPasswordRef.current.value
-            });
+            const res = await axios.post("http://localhost:8000/api/password-reset/reset",
+                {
+                    email: emailRef.current.value,
+                    password: passwordRef.current.value,
+                    password_confirmation: confirmPasswordRef.current.value
+                },
+                {
+                    withCredentials: true,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
 
             setMessage(res.data.message);
             setTimeout(() => {
@@ -52,7 +64,7 @@ const ResetPassword = () => {
         <div className="content flex-column justify-content-center" style={{ height: "90vh" }}>
             <form onSubmit={handleSubmit} style={{ width: "450px" }} className="p-4 mt-1 mx-auto rounded bg-light">
                 <h2 className="mx-2 p-2">Restablecer contraseña</h2>
-                <p className="fs-5 py-2 px-3">Ingresa el token de recuperación y tu nueva contraseña.</p>
+                <p className="fs-5 py-2 px-3">Ingresa tu nueva contraseña.</p>
                 
                 {message && <p className="text-success">{message}</p>}
                 {error && <p className="text-danger">{error}</p>}
@@ -60,11 +72,6 @@ const ResetPassword = () => {
                 <div className="my-1 py-2 px-3">
                     <label>Correo electrónico</label>
                     <input ref={emailRef} type="email" name="email" className="form-control" readOnly required />
-                </div>
-
-                <div className="my-1 py-2 px-3">
-                    <label>Token</label>
-                    <input ref={tokenRef} type="text" name="token" className="form-control" required />
                 </div>
 
                 <div className="my-1 py-2 px-3">

@@ -63,8 +63,9 @@ const Footer = () => {
                             className="form-control" 
                             value={email}
                             onChange={handleEmailChange}
+                            title="Ingresa tu correo para recibir actualizaciones"
                         />
-                        <button className="btn" onClick={handleSubscribe}>Suscribete</button>
+                        <button className="btn" onClick={handleSubscribe} title="Suscríbete a nuestro boletín">Suscribete</button>
                     </div>
                     {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
                 </div>
@@ -78,12 +79,12 @@ const Footer = () => {
                 <div>
                     <nav>
                         <p>Centro de ayuda</p>
-                        <a href="#" onClick={openModal}>¿Quienes somos?</a>
-                        <a href="#" onClick={openPrivacyModal}>Políticas y Privacidad</a>
+                        <a href="#" onClick={openModal} title="Conoce más sobre nosotros">¿Quienes somos?</a>
+                        <a href="#" onClick={openPrivacyModal} title="Lee nuestras políticas de privacidad">Políticas y Privacidad</a>
                     </nav>
                     <nav>
                         <p>Contactanos</p>
-                        <a href="mailto:popayan.noct@gmail.com">
+                        <a href="mailto:popayan.noct@gmail.com" title="Envíanos un correo electrónico">
                             <i className="fa-solid fa-envelope"> </i>
                             <span> popayan.noc@gmail.com</span>
                         </a>
