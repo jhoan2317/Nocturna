@@ -3,63 +3,57 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Http\Resources\Category\CategoryResource;
+use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 
 class CategoriesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return response()->json(Category::all(), 200);
+        $categories = Category::with('places')->get();
+        return CategoryResource::collection($categories);
     }
 
-    public function categoryEvents(Request $request)
+    public function categoryEvents(string $slug)
     {
-        return Category::where('title', $request->title)->first()->events;
+        $category = Category::where('slug', $slug)
+            ->with('places')
+            ->firstOrFail();
+
+        return new CategoryResource($category);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-        ]);
+        $category = Category::create($request->validated());
 
-        $category = new Category();
-        $category->title = $request->input('title');
-        $category->save();
-
-        return response()->json(['success' => true, 'category' => $category], 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Categoría creada exitosamente',
+            'category' => new CategoryResource($category)
+        ], 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-        ]);
+        $category->update($request->validated());
 
-        $category = Category::findOrFail($id);
-        $category->title = $request->input('title');
-        $category->save();
-
-        return response()->json(['success' => true, 'category' => $category], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'Categoría actualizada exitosamente',
+            'category' => new CategoryResource($category)
+        ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(string $slug)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::where('slug', $slug)->firstOrFail();
         $category->delete();
 
-        return response()->json(['success' => true], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'Categoría eliminada exitosamente'
+        ], 200);
     }
 }

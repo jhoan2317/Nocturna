@@ -6,27 +6,40 @@ import Spinner from "../../partials/Spinner";
 import ItemCard from "../events/itemCard";
 
 const Category = () => {
-    const [data, setData] = useState(null);
-    const {title} = useParams();
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { slug } = useParams();
 
     useEffect(()=>{
-        // events
-        axios.get(`http://localhost:8000/api/categories/${title}`)
-        .then(res => setData(res.data))
-        .catch(err => console.error(err))
-    }, [title]);
+        setLoading(true);
+        axios.get(`http://localhost:8000/api/categories/${slug}/events`)
+        .then(res => {
+            if (res.data && Array.isArray(res.data.data)) {
+                setData(res.data.data);
+            } else {
+                setData([]);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            setData([]);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+    }, [slug]);
 
     return(
         <div className="content">
             <Leftside />
             <div className="rightSide">
-                {data==null
-                    ?   <Spinner />
-                    :   <div className="items">
-                            {data.map(event =>
-                                <ItemCard event={event} key={event.id} />
-                            )}
-                    </div>
+                {loading
+                    ? <Spinner />
+                    : <div className="items">
+                        {data.map(event =>
+                            <ItemCard event={event} key={event.id} />
+                        )}
+                      </div>
                 }
             </div>
         </div>

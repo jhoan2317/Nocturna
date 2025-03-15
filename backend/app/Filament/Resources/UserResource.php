@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Section;
 use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
@@ -27,7 +28,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Usuarios';
+    protected static ?string $navigationGroup = 'Administración';
 
     protected static ?int $navigationSort = 1;
 
@@ -43,6 +44,7 @@ class UserResource extends Resource
         return 'Gestionar usuarios del sistema';
     }
 
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -104,7 +106,7 @@ class UserResource extends Resource
                 TextColumn::make('roles.name')
                     ->label('Roles')
                     ->badge(),
-                ToggleColumn::make('active')
+                ToggleColumn::make('status')
                     ->label('Activo'),
                 TextColumn::make('created_at')
                     ->label('Creado')
@@ -121,13 +123,11 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
@@ -157,4 +157,35 @@ class UserResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('view_any_users');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create_users');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->can('edit_users');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->can('delete_users');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view_users');
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return auth()->user()->can('view_users');
+    }
+    
 } 

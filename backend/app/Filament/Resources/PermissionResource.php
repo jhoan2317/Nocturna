@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\PermissionResource\Pages;
+use Illuminate\Database\Eloquent\Model;
 
 class PermissionResource extends Resource
 {
@@ -34,6 +35,43 @@ class PermissionResource extends Resource
     public static function getNavigationTooltip(): string
     {
         return 'Gestionar permisos del sistema';
+    }
+
+    
+
+    public static function getPermissionIdentifier(): string
+    {
+        return 'permissions';
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('view_any_permissions');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create_permissions');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->can('update_permissions');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->can('delete_permissions');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view_any_permissions');
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return auth()->user()->can('view_permissions');
     }
 
     public static function form(Form $form): Form

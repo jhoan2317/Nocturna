@@ -3,35 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
-use Illuminate\Http\Request;
+use App\Http\Resources\Comment\CommentResource;
+use App\Http\Requests\Comment\StoreCommentRequest;
 
 class CommentsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $comments = Comment::with(['user', 'place'])->get();
+        return CommentResource::collection($comments);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreCommentRequest $request)
     {
-        $data = $request->only('text', 'user_id', 'event_id');
-        Comment::create($data);
-        
-        return response()->json(['success' => true]);
+        $comment = Comment::create($request->validated());
+        $comment->load(['user', 'place']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Comentario creado exitosamente',
+            'comment' => new CommentResource($comment)
+        ], 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(string $slug)
     {
-        
-    }
+        $comment = Comment::where('slug', $slug)->firstOrFail();
+        $comment->delete();
 
+        return response()->json([
+            'success' => true,
+            'message' => 'Comentario eliminado exitosamente'
+        ]);
+    }
 }

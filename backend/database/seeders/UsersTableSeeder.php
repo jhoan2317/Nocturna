@@ -12,9 +12,9 @@ class UsersTableSeeder extends Seeder
     public function run(): void
     {
         $date = new DateTime('now');
-        $password1 = bcrypt('admin123');
+        $password1 = bcrypt('admin1234');
         $password2 = bcrypt('client123');
-        $password3 = bcrypt('user123');
+        $password3 = bcrypt('user1234');
 
         $data = [
             [
@@ -24,8 +24,7 @@ class UsersTableSeeder extends Seeder
                 'email' => 'admin@gmail.com',
                 'password' => $password1,
                 'role' => 'admin',
-                'active' => 1,
-                'profile_id' => 1,
+                'status' => true,
                 'created_at' => $date,
                 'updated_at' => $date
             ],
@@ -36,8 +35,7 @@ class UsersTableSeeder extends Seeder
                 'email' => 'client@gmail.com',
                 'password' => $password2,
                 'role' => 'client',
-                'active' => 1,
-                'profile_id' => 2,
+                'status' => true,
                 'created_at' => $date,
                 'updated_at' => $date
             ],
@@ -48,15 +46,14 @@ class UsersTableSeeder extends Seeder
                 'email' => 'user@gmail.com',
                 'password' => $password3,
                 'role' => 'user',
-                'active' => 1,
-                'profile_id' => 3,
+                'status' => true,
                 'created_at' => $date,
                 'updated_at' => $date
             ]
         ];
 
         foreach ($data as $item) {
-            $item['slug'] = Str::random(5) . '-' . Str::slug($item['name']);
+            $item['slug'] = Str::random(6) . '-' . Str::slug($item['name']);
             $user = User::updateOrCreate($item);
             $user->assignRole($item['role']);
         }

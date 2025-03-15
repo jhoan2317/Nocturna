@@ -30,7 +30,7 @@ const DashboardBrands = () => {
 
   const fetchBrands = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/brands");
+      const res = await axios.get("http://localhost:8000/api/categories");
       dispatch({ type: "setBrands", payload: { brands: res.data } });
     } catch (err) {
       console.log(err.message);

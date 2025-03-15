@@ -5,108 +5,124 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use App\Http\Resources\Event\EventResource;
+use App\Http\Requests\Event\StoreEventRequest;
+use App\Http\Requests\Event\UpdateEventRequest;
 
 class EventsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        return Event::with('category', 'brand')->get();
-        // return response()->json(['success' => true, 'title' => 'events', 'data' => $events]);
+        $events = Event::with(['place.category', 'comments', 'savedEvents'])->get();
+        return EventResource::collection($events);
     }
 
-    public function search(Request $request){
-        $events = Event::where('title', 'like', '%'.$request->text.'%')
-                ->orWhere('description', 'like', '%'.$request->text.'%')
-                ->with('category', 'brand') 
-                ->get();
-                
-        return $events;
+    public function search(Request $request)
+    {
+        $events = Event::query()
+            ->with(['place.category', 'comments', 'savedEvents'])
+            ->when($request->has('title'), function ($query) use ($request) {
+                $query->where('title', 'like', '%' . $request->title . '%');
+            })
+            ->when($request->has('description'), function ($query) use ($request) {
+                $query->where('description', 'like', '%' . $request->description . '%');
+            })
+            ->when($request->has('capacity'), function ($query) use ($request) {
+                $query->where('capacity', $request->capacity);
+            })
+            ->when($request->has('min_price'), function ($query) use ($request) {
+                $query->where('price', '>=', $request->min_price);
+            })
+            ->when($request->has('max_price'), function ($query) use ($request) {
+                $query->where('price', '<=', $request->max_price);
+            })
+            ->when($request->has('place_id'), function ($query) use ($request) {
+                $query->where('place_id', $request->place_id);
+            })
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'events' => EventResource::collection($events)
+        ]);
     }
 
-    public function show(Request $request){
-        return Event::with('brand', 'category')->find($request->id);
+    public function show(Request $request)
+    {
+        $event = Event::with(['place.category', 'comments', 'savedEvents'])
+            ->findOrFail($request->id);
+
+        return new EventResource($event);
     }
 
-    public function comments(Request $request){
+    public function comments(Request $request)
+    {
         $event = Event::find($request->event_id);
         $comments = Comment::where('event_id', $event->id)->with('user.profile')->get();
 
         return $comments;
     }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-{
-    // Valida los datos entrantes
-    $validatedData = $request->validate([
-        'title'       => 'required|string|max:255',
-        'description' => 'required|string',
-        'location'    => 'required|string',
-        'price'       => 'required|numeric',
-        'rating'      => 'required|numeric',
-        'imgPath'     => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validar que sea una imagen
-        'category_id' => 'required|exists:categories,id',
-        'brand_id'    => 'required|exists:brands,id',
-    ]);
 
-    // Manejar la carga de la imagen
-    if ($request->hasFile('imgPath')) {
-        $file = $request->file('imgPath');
-        $filename = time() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('events_img'), $filename); // Mover la imagen a la carpeta events_img
-        $validatedData['imgPath'] = $filename; // Almacenar el nombre del archivo
-    }
-
-    // Crear el evento
-    $event = Event::create($validatedData);
-
-    return response()->json([
-        'success' => true,
-        'event'   => $event,
-    ], 201);
-}
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function store(StoreEventRequest $request)
     {
-        $event = Event::findOrFail($id);
+        $data = $request->validated();
 
-        $validatedData = $request->validate([
-            'title'       => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string',
-            'location'    => 'sometimes|required|string',
-            'price'       => 'sometimes|required|numeric',
-            'rating'      => 'sometimes|required|numeric',
-            'imgPath'     => 'nullable|string',
-            'category_id' => 'sometimes|required|exists:categories,id',
-            'brand_id'    => 'sometimes|required|exists:brands,id',
-        ]);
+        if ($request->hasFile('imgPath')) {
+            $file = $request->file('imgPath');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('events'), $filename);
+            $data['imgPath'] = 'events/' . $filename;
+        }
 
-        // Puedes decidir si actualizar el slug cuando cambie el título, 
-        // pero con el hook de creación no se vuelve a generar automáticamente en update.
-        // Por lo general, se deja sin cambios o se actualiza manualmente si es necesario.
-
-        $event->update($validatedData);
+        $event = Event::create($data);
+        $event->load(['place', 'comments', 'savedEvents']);
 
         return response()->json([
             'success' => true,
-            'event'   => $event,
+            'message' => 'Evento creado exitosamente',
+            'event' => new EventResource($event)
+        ], 201);
+    }
+
+    public function update(UpdateEventRequest $request, string $id)
+    {
+        $event = Event::findOrFail($id);
+        $data = $request->validated();
+
+        if ($request->hasFile('imgPath')) {
+            // Eliminar imagen anterior si existe
+            if ($event->imgPath && file_exists(public_path($event->imgPath))) {
+                unlink(public_path($event->imgPath));
+            }
+
+            $file = $request->file('imgPath');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('events'), $filename);
+            $data['imgPath'] = 'events/' . $filename;
+        }
+
+        $event->update($data);
+        $event->load(['place', 'comments', 'savedEvents']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Evento actualizado exitosamente',
+            'event' => new EventResource($event)
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Event $event)
     {
+        if ($event->imgPath && file_exists(public_path($event->imgPath))) {
+            unlink(public_path($event->imgPath));
+        }
+        
         $event->delete();
-        $events = Event::with('category', 'brand')->get();
-
-        return response()->json(['success' => true, 'events' => $events]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Evento eliminado exitosamente'
+        ]);
     }
 }

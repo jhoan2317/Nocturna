@@ -23,16 +23,23 @@ const Traitement = () => {
                             const userData = JSON.parse(user);
                             dispatch({ type: 'setUser', payload: { user: userData } });
                             
-                            // Si es admin y no estamos ya en el panel de administración
-                            if (userData.role === 'admin' && !window.location.href.includes('/admin')) {
+                            // Manejar redirecciones según el rol
+                            if (window.location.href.includes('/admin')) {
+                                if (!['admin', 'client'].includes(userData.role)) {
+                                    // Solo redirigir si no es ni admin ni client
+                                    window.location.replace('http://localhost:3000');
+                                    return;
+                                }
+                            } else if (['admin', 'client'].includes(userData.role)) {
+                                // Redirigir al panel admin si el usuario es admin o client
                                 window.location.replace('http://localhost:8000/admin');
                                 return;
                             }
                             
-                            // Solo cargar eventos guardados para usuarios normales
+                            // Cargar eventos guardados para usuarios que no son admin
                             if (userData.role !== 'admin') {
                                 try {
-                                    const savedEventsRes = await api.get(`/api/savedEvents/user/${userData.id}`);
+                                    const savedEventsRes = await api.get(`/api/saved-events/user/${userData.id}`);
                                     if (savedEventsRes.data.success) {
                                         dispatch({ type: 'setSavedEvents', payload: { data: savedEventsRes.data.savedEvents } });
                                     }
@@ -59,13 +66,27 @@ const Traitement = () => {
                 // Solo cargar datos iniciales si no estamos en el panel de admin
                 if (!window.location.href.includes('/admin')) {
                     try {
-                        const [eventsRes, brandsRes] = await Promise.all([
-                            api.get('/api/events'),
-                            api.get('/api/brands')
+                        const [eventsRes, categoriesRes] = await Promise.all([
+                            api.get('/api/places?include=category'),
+                            api.get('/api/categories')
                         ]);
 
-                        dispatch({ type: 'setEvents', payload: { events: eventsRes.data } });
-                        dispatch({ type: 'setBrands', payload: { brands: brandsRes.data } });
+                        console.log('API Response - Events:', eventsRes.data);
+                        console.log('API Response - Categories:', categoriesRes.data);
+
+                        // Asignar la categoría a cada evento basado en category_id
+                        const events = eventsRes.data.data.map(event => {
+                            const category = categoriesRes.data.data.find(
+                                cat => cat.id === event.category_id
+                            );
+                            return {
+                                ...event,
+                                category
+                            };
+                        });
+
+                        dispatch({ type: 'setEvents', payload: { events: { data: events } } });
+                        dispatch({ type: 'setCategories', payload: { categories: categoriesRes.data } });
 
                         // Load cart from localStorage
                         const cartData = window.localStorage.getItem('events');

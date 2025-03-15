@@ -1,35 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
+import { useSelector } from "react-redux";
 
 const LeftSide = () => {
-  const [brands, setBrands] = useState([]);
-
-  const fetchBrands = async () => {
-    try {
-      const res = await axios.get("http://localhost:8000/api/brands");
-      setBrands(res.data);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchBrands();
-  }, []);
+  const categories = useSelector(store => store.categories) || [];
 
   return (
     <div className="leftSide">
       <div>
         <h3>Eventos</h3>
         <nav>
-          {brands.map((brand) => (
+          {categories.map((category) => (
             <NavLink 
-              key={brand.id} 
-              to={`/brands/${brand.title}`}
-              title={`Ver todos los eventos de ${brand.title}`}
+              key={category.id} 
+              to={`/categories/${category.slug}`}
+              title={`Ver todos los eventos de ${category.title}`}
             >
-              {brand.title}
+              {category.title}
             </NavLink>
           ))}
         </nav>

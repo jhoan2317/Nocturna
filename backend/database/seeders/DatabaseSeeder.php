@@ -9,11 +9,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RolesAndPermissionsSeeder::class,
-            ProfilesTableSeeder::class,
+            UsersTableSeeder::class,
             CategoriesTableSeeder::class,
-            BrandsTableSeeder::class,
+            PlacesTableSeeder::class,
             EventsTableSeeder::class,
-            UsersTableSeeder::class
+            RatingsTableSeeder::class,
+            RestrictionsTableSeeder::class
         ]);
     }
 }

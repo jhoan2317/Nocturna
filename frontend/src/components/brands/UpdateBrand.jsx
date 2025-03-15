@@ -18,7 +18,7 @@ const UpdateBrand = ({ brand, closeModal, onSuccess }) => {
     e.preventDefault();
     setError("");
     try {
-      const res = await axios.put(`http://localhost:8000/api/brands/${brand.id}`, formData);
+      const res = await axios.put(`http://localhost:8000/api/categories/${brand.id}`, formData);
       if (res.data.success) {
         onSuccess();
         closeModal();

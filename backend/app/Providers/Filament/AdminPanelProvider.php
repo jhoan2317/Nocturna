@@ -18,6 +18,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\MenuItem;
+use Filament\Facades\Filament;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,8 +31,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Emerald,
+                'primary' => Color::Amber,
             ])
+            ->authGuard('web')
             ->navigationItems([
                 NavigationItem::make('Escritorio')
                     ->icon('heroicon-o-home')
@@ -40,6 +43,7 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(1),
                 NavigationItem::make('Usuarios')
                     ->icon('heroicon-o-users')
+                    ->group('Administración')
                     ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.users.*'))
                     ->url(fn (): string => route('filament.admin.resources.users.index'))
                     ->badge('Gestión de Usuarios', color: 'info')
@@ -77,5 +81,6 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+            
     }
 }

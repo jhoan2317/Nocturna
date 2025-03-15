@@ -9,8 +9,16 @@ import Spinner from "../../partials/Spinner";
 const Home = () => {
     const navigate = useNavigate();
     const user = useSelector(store => store.user);
-    const brands = useSelector(store => store.brands);
-    const data = useSelector(store => store.events);
+    const categories = useSelector(store => store.categories) || [];
+    const events = useSelector(store => store.events) || [];
+
+    useEffect(() => {
+        console.log('Categories:', categories);
+        console.log('Events:', events);
+        events.forEach(event => {
+            console.log(`Event ${event.id}:`, event);
+        });
+    }, [categories, events]);
 
     // Redirigir si el usuario es admin
     useEffect(() => {
@@ -22,15 +30,23 @@ const Home = () => {
     return (
         <div className="home">
             <Slide />
-            {(brands == null || data == null) ? (
+            {(!Array.isArray(categories) || categories.length === 0 || !events) ? (
                 <Spinner />
             ) : (
-                brands.map(brand => (
-                    <Fragment key={brand.id}>
-                        <EventBg bg={`bg/${brand.title}.jpg`} />
-                        <ItemsCard events={data} brand={brand.title} state="home" />
-                    </Fragment>
-                ))
+                categories.map(category => {
+                    console.log(`Rendering category:`, category);
+                    return (
+                        <Fragment key={category.id}>
+                            <EventBg bg={`bg/${category.title}.jpg`} />
+                            <ItemsCard 
+                                events={events} 
+                                brand={category.title} 
+                                state="home" 
+                                slug={category.slug} 
+                            />
+                        </Fragment>
+                    );
+                })
             )}
         </div>
     );

@@ -11,14 +11,11 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique();
-            $table->string('text');
-
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
-
-            $table->bigInteger('event_id')->unsigned();
-            $table->foreign('event_id')->references('id')->on('events');
-
+            $table->bigInteger('place_id')->unsigned();
+            $table->foreign('place_id')->references('id')->on('places');
+            $table->string('text');
             $table->timestamps();
             $table->softDeletes();
         });

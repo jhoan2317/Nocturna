@@ -16,6 +16,7 @@ use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\CommentResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class CommentResource extends Resource
 {
@@ -28,9 +29,41 @@ class CommentResource extends Resource
     protected static ?string $navigationLabel = 'Comentarios';
     protected static ?int $navigationSort = 4;
 
+    
+
+    public static function getPermissionIdentifier(): string
+    {
+        return 'comments';
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
-        return true;
+        return auth()->user()->can('view_any_comments');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create_comments');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->can('update_comments');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->can('delete_comments');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view_any_comments');
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return auth()->user()->can('view_comments');
     }
 
     public static function form(Form $form): Form
@@ -48,12 +81,12 @@ class CommentResource extends Resource
                             ->searchable()
                             ->preload()
                             ->label('Usuario'),
-                        Select::make('event_id')
-                            ->relationship('event', 'title')
+                        Select::make('place_id')
+                            ->relationship('place', 'title')
                             ->required()
                             ->searchable()
                             ->preload()
-                            ->label('Evento'),
+                            ->label('Lugar'),
                     ])
             ]);
     }
@@ -69,8 +102,8 @@ class CommentResource extends Resource
                 TextColumn::make('user.name')
                     ->label('Usuario')
                     ->searchable(),
-                TextColumn::make('event.title')
-                    ->label('Evento')
+                TextColumn::make('place.title')
+                    ->label('Lugar')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Creado')
@@ -83,11 +116,11 @@ class CommentResource extends Resource
                     ->searchable()
                     ->preload()
                     ->label('Usuario'),
-                Tables\Filters\SelectFilter::make('event')
-                    ->relationship('event', 'title')
+                Tables\Filters\SelectFilter::make('place')
+                    ->relationship('place', 'title')
                     ->searchable()
                     ->preload()
-                    ->label('Evento'),
+                    ->label('Lugar'),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([

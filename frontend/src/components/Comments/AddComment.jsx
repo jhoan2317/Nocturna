@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const AddComment = ({id, updateComments, setComments}) => {
+const AddComment = ({id, updateComments, setComments, type = 'place'}) => {
     const user = useSelector(store => store.user);
     const isAuthenticated = useSelector(store => store.isAuthenticated);
     const navigate = useNavigate();
@@ -18,10 +18,17 @@ const AddComment = ({id, updateComments, setComments}) => {
             if (event.keyCode === 13 && text.current !== '') {
                 const data = {
                     text: text.current,
-                    event_id: id,
                     user_id: user.id
                 }
-                api.post('/api/comments/store', data)
+                
+                // Añadir el ID según el tipo (lugar o evento)
+                if (type === 'place') {
+                    data.place_id = id;
+                } else {
+                    data.event_id = id;
+                }
+
+                api.post('/api/comments', data)
                 .then(res => {
                     if(res.data.success){
                         event.target.value = '';
@@ -29,7 +36,10 @@ const AddComment = ({id, updateComments, setComments}) => {
                         updateComments();
                     }
                 })
-                .catch(err => console.log(err.message) )
+                .catch(err => {
+                    console.error('Error adding comment:', err.response?.data || err);
+                    alert('Error al añadir el comentario. Por favor, inténtalo de nuevo.');
+                });
             }
         }else{
             navigate('/users/login');
@@ -38,7 +48,13 @@ const AddComment = ({id, updateComments, setComments}) => {
 
     return(
         <div className='addCommentP'>
-            <input onChange={(event)=>handleText(event)} onKeyDown={(event)=>handleKeyDown(event)} type="text" className="search form-control" placeholder="Añadir un comentario" />
+            <input 
+                onChange={(event)=>handleText(event)} 
+                onKeyDown={(event)=>handleKeyDown(event)} 
+                type="text" 
+                className="search form-control" 
+                placeholder={`Añadir un comentario al ${type === 'place' ? 'lugar' : 'evento'}`} 
+            />
         </div>
     )
 }

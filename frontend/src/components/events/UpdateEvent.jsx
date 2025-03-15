@@ -27,7 +27,7 @@ const UpdateEvent = ({ event, closeModal, onSuccess }) => {
     useEffect(() => {
         const fetchBrandsAndCategories = async () => {
             try {
-                const brandsRes = await axios.get("http://localhost:8000/api/brands");
+                const brandsRes = await axios.get("http://localhost:8000/api/categories");
                 setBrands(brandsRes.data);
                 const categoriesRes = await axios.get("http://localhost:8000/api/categories");
                 setCategories(categoriesRes.data);
@@ -42,7 +42,7 @@ const UpdateEvent = ({ event, closeModal, onSuccess }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.put(`http://localhost:8000/api/events/${event.id}`, {
+            const res = await axios.put(`http://localhost:8000/api/places/${event.id}`, {
                 title,
                 description,
                 location,

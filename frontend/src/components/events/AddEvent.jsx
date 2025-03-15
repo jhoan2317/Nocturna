@@ -23,7 +23,7 @@ const AddEvent = ({ closeModal, onSuccess }) => {
       .then((res) => setCategories(res.data))
       .catch((err) => console.error(err));
 
-    axios.get("http://localhost:8000/api/brands")
+    axios.get("http://localhost:8000/api/categories")
       .then((res) => setBrands(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -52,7 +52,7 @@ const AddEvent = ({ closeModal, onSuccess }) => {
         formDataToSend.append(key, formData[key]);
       });
 
-      const res = await axios.post("http://localhost:8000/api/events", formDataToSend, {
+      const res = await axios.post("http://localhost:8000/api/places", formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

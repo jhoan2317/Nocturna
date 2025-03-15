@@ -90,6 +90,7 @@ return [
     'middleware' => [
         'auth' => [
             'web',
+            \App\Http\Middleware\FilamentPermissionsMiddleware::class,
         ],
         'base' => [
             'web',

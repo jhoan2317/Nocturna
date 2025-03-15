@@ -37,7 +37,7 @@ const UserIcon = () => {
         <div className="userIcon">
             {!isAuthenticated
                 ? <i className="fa-solid fa-circle-user" onClick={()=>setDisplayDiv(!displayDiv)} title="Opciones de cuenta"></i>
-                : <img src={`/users_img/${user.profile.profilePic != null ? user.profile.profilePic : 'no-img.jpg'}`} alt="" onClick={()=>setDisplayDiv(!displayDiv)} title="Tu perfil"/>
+                : <img src="/users_img/no-img.jpg" alt="" onClick={()=>setDisplayDiv(!displayDiv)} title="Tu perfil"/>
             }
             <div className={displayDiv ? 'open' : ''}>
                 {routes.map(r =>

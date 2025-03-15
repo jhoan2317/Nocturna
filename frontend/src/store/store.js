@@ -3,8 +3,8 @@ import {legacy_createStore} from "redux";
 
 const init_State = {
     isAuthenticated : false,
-    brands : null,
-    events : null,
+    categories : [],
+    events : [],
     eventsCart : [],
     total : 0,
     user : null,
@@ -25,11 +25,11 @@ const reducer = (state = init_State, action) => {
         case 'setUser' :
             return {...state, user : action.payload.user}
 
-        case 'setBrands' :
-            return {...state, brands : action.payload.brands};
+        case 'setCategories' :
+            return {...state, categories : action.payload.categories.data || []};
 
         case 'setEvents' :
-            return {...state, events : action.payload.events};
+            return {...state, events : action.payload.events.data || []};
 
         case 'seteventsCart' :
             return {...state, eventsCart : action.payload.data};

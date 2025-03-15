@@ -11,7 +11,7 @@ const Filter = () => {
 
     useEffect(()=>{
         // events
-        axios.get(`http://localhost:8000/api/events/search/${text}`)
+        axios.get(`http://localhost:8000/api/places/search/${text}`)
         .then(res => setData(res.data) )
         .catch(err => console.error(err))
     }, [text]);

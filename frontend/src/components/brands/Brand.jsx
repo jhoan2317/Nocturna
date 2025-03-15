@@ -8,20 +8,20 @@ import ItemCard from "../events/itemCard";
 
 const Brand = () => {
     const [data, setData] = useState(null);
-    const {title} = useParams();
+    const { title: slug } = useParams();
 
     useEffect(()=>{
         // events
-        axios.get(`http://localhost:8000/api/brands/${title}`)
+        axios.get(`http://localhost:8000/api/categories/${slug}/events`)
         .then(res => setData(res.data))
         .catch(err => console.error(err))
-    }, [title]);
+    }, [slug]);
 
     return(
         <div className="content">
             <LeftSide />
             <div className="rightSide">
-                <EventBg bg={`/bg/${title}.jpg`}/>
+                <EventBg bg={`/bg/${slug}.jpg`}/>
                 {data==null
                     ?   <Spinner />
                     :   <div className="items">

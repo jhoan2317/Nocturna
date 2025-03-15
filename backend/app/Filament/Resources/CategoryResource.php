@@ -14,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\CategoryResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class CategoryResource extends Resource
 {
@@ -26,9 +27,41 @@ class CategoryResource extends Resource
     protected static ?string $navigationLabel = 'Categorias';
     protected static ?int $navigationSort = 3;
 
+    
+
+    public static function getPermissionIdentifier(): string
+    {
+        return 'categories';
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
-        return true;
+        return auth()->user()->can('view_any_categories');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create_categories');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->can('update_categories');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->can('delete_categories');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view_any_categories');
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return auth()->user()->can('view_categories');
     }
 
     public static function form(Form $form): Form
@@ -53,9 +86,9 @@ class CategoryResource extends Resource
                     ->label('Nombre')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('events_count')
-                    ->label('Eventos')
-                    ->counts('events')
+                TextColumn::make('places.title')
+                    ->label('Lugares')
+                    ->counts('places')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Creado')

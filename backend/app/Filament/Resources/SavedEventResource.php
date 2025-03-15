@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SavedEventResource\Pages;
+use Illuminate\Database\Eloquent\Model;
 
 class SavedEventResource extends Resource
 {
@@ -32,11 +33,6 @@ class SavedEventResource extends Resource
     public static function getNavigationTooltip(): string
     {
         return 'Gestionar eventos guardados por usuarios';
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return true;
     }
 
     public static function table(Table $table): Table
@@ -74,5 +70,42 @@ class SavedEventResource extends Resource
         return [
             'index' => Pages\ListSavedEvents::route('/'),
         ];
+    }
+
+    protected static function checkPermission(string $permission): bool
+    {
+        return auth()->check();
+        // En producción, descomentar la siguiente línea y comentar la anterior:
+        // return auth()->check() && auth()->user()->hasPermissionTo($permission);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::checkPermission('view saved events');
+    }
+
+    public static function canCreate(): bool
+    {
+        return static::checkPermission('create saved events');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return static::checkPermission('edit saved events');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return static::checkPermission('delete saved events');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::checkPermission('view saved events');
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return static::checkPermission('view saved events');
     }
 } 

@@ -18,7 +18,9 @@ use Filament\Panel;
 class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, UseSlugAsKey, HasRoles;
+
     protected $table = "users";
+
     protected $fillable = [
         'slug',
         'name',
@@ -28,8 +30,7 @@ class User extends Authenticatable implements FilamentUser
         'birthday',
         'gender',
         'role',
-        'active',
-        'profile_id'
+        'status'
     ];
 
     public static function boot()
@@ -40,7 +41,7 @@ class User extends Authenticatable implements FilamentUser
         });
     }
 
-    protected $attributes = [ 
+    protected $attributes = [
         'birthday' => '1970-01-01',
     ];
 
@@ -53,18 +54,23 @@ class User extends Authenticatable implements FilamentUser
         'email_verified_at' => 'datetime',
     ];
 
-    public function profile(): BelongsTo 
-    {
-        return $this->belongsTo(Profile::class);
-    }
-
-    public function savedEvents(): HasMany 
+    public function savedEvents(): HasMany
     {
         return $this->hasMany(SavedEvent::class);
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasRole('admin');
+        return $this->hasRole(['admin', 'client']);
     }
 }

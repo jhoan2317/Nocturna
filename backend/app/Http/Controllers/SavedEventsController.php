@@ -4,16 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\SavedEvent;
-use Illuminate\Http\Request;
+use App\Http\Resources\SavedEvent\SavedEventResource;
+use App\Http\Requests\SavedEvent\StoreSavedEventRequest;
 
 class SavedEventsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        // return SavedEvents::all();
+        $savedEvents = SavedEvent::with(['user', 'event'])->get();
+        return SavedEventResource::collection($savedEvents);
     }
 
     public function savedEventsUser($id_user)
@@ -26,29 +26,26 @@ class SavedEventsController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreSavedEventRequest $request)
     {
-        $data = $request->only('user_id', 'event_id');
-        SavedEvent::create($data);
+        $savedEvent = SavedEvent::create($request->validated());
+        $savedEvent->load(['user', 'event']);
 
-        $savedEvents = User::find($request->user_id)->savedevents()->with('event.brand')->get();
-        return response()->json(['success' => true, 'savedEvents' => $savedEvents], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'Evento guardado exitosamente',
+            'saved_event' => new SavedEventResource($savedEvent)
+        ], 201);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($event_id, $user_id)
+    public function destroy(string $slug)
     {
-        $savedEvent = SavedEvent::where(['event_id' => $event_id, 'user_id' => $user_id])->first();
-        if ($savedEvent) {
-            $savedEvent->delete();
-        }
+        $savedEvent = SavedEvent::where('slug', $slug)->firstOrFail();
+        $savedEvent->delete();
 
-        $savedEvents = User::find($user_id)->savedevents()->with('event.brand')->get();
-        return response()->json(['success' => true, 'savedEvents' => $savedEvents]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Evento eliminado de guardados exitosamente'
+        ]);
     }
 }

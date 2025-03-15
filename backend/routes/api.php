@@ -1,73 +1,78 @@
 <?php
 
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\EventsController;
-use App\Http\Controllers\Brandscontroller;
+use App\Http\Controllers\PlacesController;
+use App\Http\Controllers\RatingsController;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\RestrictionsController;
 use App\Http\Controllers\PasswordResetController;
-use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\SavedEventsController;
 use App\Http\Controllers\SubscriptionController;
-
-
+use App\Http\Controllers\ClientRequestController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/events', [EventsController::class, 'index']);
-Route::post('/events', [EventsController::class, 'store']);
-Route::get('/brands', [Brandscontroller::class, 'index']);
-Route::put('/brands/{id}', [BrandsController::class, 'update']);
-Route::get('/brands/{title}', [Brandscontroller::class, 'brandEvents']);
-Route::get('/categories', [CategoriesController::class, 'index']);
-Route::get('/categories/{title}', [CategoriesController::class, 'categoryEvents']);
-Route::post('/categories', [CategoriesController::class, 'store']); 
-Route::put('/categories/{id}', [CategoriesController::class, 'update']); 
-Route::delete('/categories/{id}', [CategoriesController::class, 'destroy']); 
-Route::get('/events/search/{text}', [EventsController::class, 'search']);
-Route::get('/events/show/{id}', [EventsController::class, 'show']);
-Route::put('/events/{id}', [EventsController::class, 'update']);  
-Route::get('/users', [UsersController::class, 'index']);
+// Eventos
+Route::apiResource('events', EventsController::class);
+//Route::get('events/search/{text}', [EventsController::class, 'search']);
+Route::get('events/{event}/comments', [EventsController::class, 'comments']);
 
-// Preferencias
-Route::get('/savedEvents/{id_user}', [SavedEventsController::class, 'savedEventsUser']);
-Route::post('/savedEvents/store', [SavedEventsController::class, 'store']);
-Route::delete('/savedEvents/destroy/{event_id}/{user_id}', [SavedEventsController::class, 'destroy']);
+// Lugares
+Route::apiResource('places', PlacesController::class);
+Route::get('places/search/{text}', [PlacesController::class, 'search']);
+Route::get('places/{place}/events', [PlacesController::class, 'placeEvents']);
 
-// Registro && Inicio de sesión && Cerrar sesión
-Route::post('/users/login', [UsersController::class, 'login']);
-Route::post('/users/logout', [UsersController::class, 'logout']);
-Route::post('/users/register', [UsersController::class, 'register']);
+// Categorías
+Route::apiResource('categories', CategoriesController::class);
+Route::get('categories/{title}/events', [CategoriesController::class, 'categoryEvents']);
+
+// Usuarios
+Route::apiResource('users', UsersController::class)->only(['index', 'update']);
+Route::post('users/login', [UsersController::class, 'login']);
+Route::post('users/logout', [UsersController::class, 'logout']);
+Route::post('users/register', [UsersController::class, 'register']);
+Route::put('users/{user}/block', [UsersController::class, 'block']);
+
+// Eventos Guardados
+Route::apiResource('saved-events', SavedEventsController::class)->only(['index', 'store', 'destroy']);
+Route::get('users/{user}/saved-events', [SavedEventsController::class, 'savedEventsUser']);
 
 // Comentarios
-Route::get('/comments/{event_id}', [EventsController::class, 'comments']);
-Route:: post('/comments/store', [CommentsController::class, 'store']);
+Route::apiResource('comments', CommentsController::class)->only(['store']);
 
-// Dashboard
-Route::put('/users/block/{user}', [UsersController::class, 'block']);
-Route::delete('/events/destroy/{event}', [EventsController::class, 'destroy']);
+// Calificaciones
+Route::apiResource('ratings', RatingsController::class)->only(['index', 'store', 'update', 'destroy']);
+Route::get('events/{event}/ratings', [RatingsController::class, 'eventRatings']);
+Route::get('users/{user}/ratings', [RatingsController::class, 'userRatings']);
 
-// Cuenta
-Route::put('/users/update/{user}/{name}', [UsersController::class, 'update']);
+// Restricciones
+Route::apiResource('restrictions', RestrictionsController::class);
+Route::get('events/{event}/restrictions', [RestrictionsController::class, 'eventRestrictions']);
 
-// Estadísticas
-Route::get('/statistics', [StatisticsController::class, 'index']);
+// Suscripciones
+Route::apiResource('subscriptions', SubscriptionController::class);
 
-// Suscripción
-Route::post('/subscribe', [SubscriptionController::class, 'store']);
-
+// Reseteo de Contraseña
 Route::prefix('password-reset')->group(function () {
-    Route::post('/request', [PasswordResetController::class, 'sendResetLink']);
-    Route::post('/reset', [PasswordResetController::class, 'resetPassword']);
+    Route::post('request', [PasswordResetController::class, 'sendResetLink']);
+    Route::post('reset', [PasswordResetController::class, 'resetPassword']);
 });
 
-Route::get('/check-auth', function () {
+// Verificación de Autenticación
+Route::get('check-auth', function () {
     return response()->json([
         'authenticated' => auth()->check() && auth()->user() !== null
     ]);
 });
+
+// Solicitudes de Cliente
+Route::post('client-requests', [ClientRequestController::class, 'store']);
+Route::get('client-requests', [ClientRequestController::class, 'index']);
+Route::put('client-requests/{request}/approve', [ClientRequestController::class, 'approve']);
+Route::put('client-requests/{request}/reject', [ClientRequestController::class, 'reject']);

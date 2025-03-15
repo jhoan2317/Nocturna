@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Support\Str;
 use App\Traits\UseSlugAsKey;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,13 +11,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Comment extends Model
 {
-    use HasApiTokens, HasFactory, SoftDeletes, UseSlugAsKey;
-    protected $table = "comments";
+    use HasFactory, SoftDeletes, UseSlugAsKey;
+
+    protected $table = 'comments';
+
     protected $fillable = [
         'slug',
         'text',
         'user_id',
-        'event_id'
+        'place_id'
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime'
     ];
 
     public static function boot()
@@ -34,8 +41,8 @@ class Comment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function event(): BelongsTo
+    public function place(): BelongsTo
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsTo(Place::class);
     }
 }

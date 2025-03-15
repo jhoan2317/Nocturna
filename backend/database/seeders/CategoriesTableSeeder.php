@@ -8,26 +8,18 @@ use Illuminate\Database\Seeder;
 
 class CategoriesTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $data = [
-            ['title' => 'Casual'],
-            ['title' => 'Deporte'],
-            ['title' => 'Aventura'],
-            ['title' => 'Cultura'],
-            ['title' => 'Entretenimiento'],
-            ['title' => 'Educación'],
-            ['title' => 'Salud y Bienestar'],
-            ['title' => 'Tecnología'],
-            ['title' => 'Arte'],
-            ['title' => 'Naturaleza'],
+            ['title' => 'Hoteles'],
+            ['title' => 'Bares'],
+            ['title' => 'Discotecas'],
+            ['title' => 'Gastrobares'],
+            ['title' => 'Restaurantes'],
         ];
 
         foreach ($data as $item) {
-            $item['slug'] = Str::random(12);
+            $item['slug'] = Str::random(6) . '-' . Str::slug($item['title']);
             Category::updateOrCreate($item);
         }
     }

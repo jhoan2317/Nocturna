@@ -8,25 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {//NOMBRE DE LA TABLA 
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique();
-            $table->string('name');  
+            $table->string('name');
             $table->string('last_name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->date('birthday')->nullable(); 
+            $table->date('birthday')->nullable();
             $table->string('gender')->nullable();
             $table->string('role');
-            $table->boolean('active')->default(1);
-
-            $table->bigInteger('profile_id')->unsigned();
-            $table->foreign('profile_id')->references('id')->on('profiles');
-
-            $table->rememberToken();//TOKEN QUE GENERA CUANDO SE LOGEA
-            $table->timestamps();// GENERA EL REGISTRO DE CUANDO SE CREO Y SE ACTUALIZO EL DATO
-            $table->softDeletes();// PARA ELIMINAR DATOS PERO SOLO LA VISTA MAS NO EN LA BASE DE DATOS
+            $table->boolean('status')->default(true);
+            $table->rememberToken();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
