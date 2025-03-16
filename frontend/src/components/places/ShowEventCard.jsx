@@ -2,17 +2,25 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const ShowEventCard = ({ event }) => {
+    // Imagen de fallback en caso de error
+    const fallbackImage = "/placeholder.jpg";
+
+    // Manejador de errores para la imagen
+    const handleImageError = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.target.src !== fallbackImage) {
+            e.target.src = fallbackImage;
+        }
+    };
+
     return (
         <div className="event-card">
             <div className="event-card-header">
                 <img 
-                    src={`/events_img/${event.imgPath}`} 
-                    alt={event.title} 
-                    onError={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        e.target.src = '/placeholder.jpg';
-                    }}
+                    src={`/places_img/${event.imgPath}`} 
+                    alt={event.title || "Lugar"} 
+                    onError={handleImageError}
                 />
             </div>
             <div className="event-card-body">
@@ -32,4 +40,4 @@ const ShowEventCard = ({ event }) => {
     );
 };
 
-export default ShowEventCard;
+export default ShowEventCard; 

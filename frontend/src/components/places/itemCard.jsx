@@ -42,4 +42,4 @@ const ItemCard = ({event: place}) => {
     )
 }
 
-export default ItemCard;
+export default ItemCard; 

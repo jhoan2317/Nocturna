@@ -108,4 +108,15 @@ class PlacesController extends Controller
             'message' => 'Lugar eliminado exitosamente'
         ], 200);
     }
+
+    public function comments(string $slug)
+    {
+        $place = Place::where('slug', $slug)->firstOrFail();
+        $comments = $place->comments()->with('user')->get();
+        
+        return response()->json([
+            'success' => true,
+            'comments' => $comments
+        ]);
+    }
 }

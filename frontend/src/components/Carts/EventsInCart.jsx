@@ -31,7 +31,15 @@ const EventsInCart = () => {
                 <div key={event.id} className="cart">
                     <span>
                         <Link to={`/events/show/${event.id}`}>
-                            <img src={`/events_img/${event.imgPath}`} alt="event" />
+                            <img 
+                                src={`/events_img/${event.imgPath}`} 
+                                alt="event" 
+                                onError={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    e.target.src = '/placeholder.jpg';
+                                }}
+                            />
                         </Link>
                         <div>
                             <p className='m-0'>{event.title}</p>

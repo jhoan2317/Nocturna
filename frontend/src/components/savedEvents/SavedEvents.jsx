@@ -47,7 +47,15 @@ const SavedEvents = () => {
                                         <td>{savedEvent.event.id}</td>
                                         <td>
                                             <Link to={`/events/show/${savedEvent.event.id}`}>
-                                                <img src={`/events_img/${savedEvent.event.imgPath}`} alt="event" />
+                                                <img 
+                                                    src={`/events_img/${savedEvent.event.imgPath}`} 
+                                                    alt="event" 
+                                                    onError={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        e.target.src = '/placeholder.jpg';
+                                                    }}
+                                                />
                                             </Link>
                                         </td>
                                         <td>{savedEvent.event.title}</td>

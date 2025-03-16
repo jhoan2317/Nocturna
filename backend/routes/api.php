@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Eventos
 Route::apiResource('events', EventsController::class);
 //Route::get('events/search/{text}', [EventsController::class, 'search']);
-Route::get('events/{event}/comments', [EventsController::class, 'comments']);
+Route::get('places/{slug}/comments', [PlacesController::class, 'comments']);
 
 // Lugares
 Route::apiResource('places', PlacesController::class);
