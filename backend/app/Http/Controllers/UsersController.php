@@ -79,6 +79,7 @@ class UsersController extends Controller
         if($user){
             return response()->json(['exists' => true]);
         }else{
+            //sin profile
             $data['birthday'] = Date($data['birthday']);
             $data['password'] = bcrypt($data['password']);
             $data['role'] = 'user';
